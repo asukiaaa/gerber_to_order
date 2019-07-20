@@ -4,11 +4,7 @@ import wx
 import locale
 import zipfile
 
-gerberDirName = "gerber_to_order"
-mergeNpth = False
-useAuxOrigin = True
-excellonFormat = pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT # pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING
-zipFileName = ""
+outputDirName = "gerber_to_order"
 
 layers = [
     [ pcbnew.F_Cu,     'GTL', None ],
@@ -32,16 +28,15 @@ def renameFile(src, dst):
     removeFile(dst)
     os.rename(src, dst)
 
-def createZip():
-    global zipFileName
+def createZip(mergeNpth, useAuxOrigin, excellonFormat):
     board = pcbnew.GetBoard()
     boardFileName = board.GetFileName()
     boardDirPath = os.path.dirname(boardFileName)
     boardProjectName = (os.path.splitext(os.path.basename(boardFileName)))[0]
-    gerberDirPath = '%s/%s' % (boardDirPath, gerberDirName)
-    drillFileName = '%s/%s.TXT' % (gerberDirPath, boardProjectName)
-    npthFileName = '%s/%s-NPTH.TXT' % (gerberDirPath, boardProjectName)
-    zipFileName = '%s/%s.zip' % (gerberDirPath, boardProjectName)
+    gerberDirPath = '%s/%s' % (boardDirPath, outputDirName)
+    drillFilePath = '%s/%s.TXT' % (gerberDirPath, boardProjectName)
+    npthFilePath = '%s/%s-NPTH.TXT' % (gerberDirPath, boardProjectName)
+    zipFilePath = '%s/%s.zip' % (gerberDirPath, boardProjectName)
     if not os.path.exists(gerberDirPath):
         os.mkdir(gerberDirPath)
     maxLayer = board.GetCopperLayerCount() + 5
@@ -61,9 +56,9 @@ def createZip():
     for layer in layers:
         targetname = '%s/%s.%s' % (gerberDirPath, boardProjectName, layer[1])
         removeFile(targetname)
-    removeFile(drillFileName)
-    removeFile(npthFileName)
-    removeFile(zipFileName)
+    removeFile(drillFilePath)
+    removeFile(npthFilePath)
+    removeFile(zipFilePath)
 
     for i in range(maxLayer):
         layer = layers[i]
@@ -87,20 +82,22 @@ def createZip():
     ew.SetOptions(False, False, offset, mergeNpth)
     ew.CreateDrillandMapFilesSet(gerberDirPath,True,False)
     if mergeNpth:
-        renameFile('%s/%s.drl' % (gerberDirPath, boardProjectName), drillFileName)
+        renameFile('%s/%s.drl' % (gerberDirPath, boardProjectName), drillFilePath)
     else:
-        renameFile('%s/%s-PTH.drl' % (gerberDirPath, boardProjectName), drillFileName)
-        renameFile('%s/%s-NPTH.drl' % (gerberDirPath, boardProjectName), npthFileName)
+        renameFile('%s/%s-PTH.drl' % (gerberDirPath, boardProjectName), drillFilePath)
+        renameFile('%s/%s-NPTH.drl' % (gerberDirPath, boardProjectName), npthFilePath)
 
     # ZIP
-    with zipfile.ZipFile(zipFileName,'w') as f:
+    with zipfile.ZipFile(zipFilePath,'w') as f:
         for i in range(maxLayer):
             layer = layers[i]
             targetname = '%s/%s.%s' % (gerberDirPath, boardProjectName, layer[1])
             f.write(targetname, os.path.basename(targetname))
-        f.write(drillFileName, os.path.basename(drillFileName))
+        f.write(drillFilePath, os.path.basename(drillFilePath))
         if not mergeNpth:
-            f.write(npthFileName, os.path.basename(npthFileName))
+            f.write(npthFilePath, os.path.basename(npthFilePath))
+
+    return zipFilePath
 
 class GerberToOrderAction(pcbnew.ActionPlugin):
     def defaults(self):
@@ -133,9 +130,13 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                 # useAuxOrigin = True if self.useAuxOrigin.GetValue() else False
                 # excellonFormat = (EXCELLON_WRITER.DECIMAL_FORMAT, EXCELLON_WRITER.SUPPRESS_LEADING)[self.zeros.GetSelection()]
                 try:
-                    createZip()
+                    zipFilePath = createZip(
+                        mergeNpth = False,
+                        useAuxOrigin = True,
+                        excellonFormat = pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT # pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING
+                    )
                     # wx.MessageBox(getstr('COMPLETE')%zip_fname, 'Gerber Zip', wx.OK|wx.ICON_INFORMATION)
-                    wx.MessageBox(zipFileName, 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
+                    wx.MessageBox(zipFilePath, 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 except Exception as e:
                     wx.MessageBox('Error: ' + str(e), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 e.Skip()
