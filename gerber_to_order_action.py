@@ -1,5 +1,6 @@
 import pcbnew
 import os
+import shutil
 import wx
 import locale
 import zipfile
@@ -41,8 +42,9 @@ def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat):
     zipFilePath = '%s/%s_for_%s.zip' % (outputDirPath, boardProjectName, pcbServiceName)
     if not os.path.exists(outputDirPath):
         os.mkdir(outputDirPath)
-    if not os.path.exists(gerberDirPath):
-        os.mkdir(gerberDirPath)
+    if os.path.exists(gerberDirPath):
+        shutil.rmtree(gerberDirPath)
+    os.mkdir(gerberDirPath)
     maxLayer = board.GetCopperLayerCount() + 5
 
     # PLOT
