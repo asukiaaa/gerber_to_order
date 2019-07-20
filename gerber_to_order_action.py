@@ -28,15 +28,19 @@ def renameFile(src, dst):
     removeFile(dst)
     os.rename(src, dst)
 
-def createZip(mergeNpth, useAuxOrigin, excellonFormat):
+def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat):
     board = pcbnew.GetBoard()
     boardFileName = board.GetFileName()
     boardDirPath = os.path.dirname(boardFileName)
     boardProjectName = (os.path.splitext(os.path.basename(boardFileName)))[0]
-    gerberDirPath = '%s/%s' % (boardDirPath, outputDirName)
+
+    outputDirPath = '%s/%s' % (boardDirPath, outputDirName)
+    gerberDirPath = '%s/%s' % (outputDirPath, pcbServiceName)
     drillFilePath = '%s/%s.TXT' % (gerberDirPath, boardProjectName)
     npthFilePath = '%s/%s-NPTH.TXT' % (gerberDirPath, boardProjectName)
-    zipFilePath = '%s/%s.zip' % (gerberDirPath, boardProjectName)
+    zipFilePath = '%s/%s_for_%s.zip' % (outputDirPath, boardProjectName, pcbServiceName)
+    if not os.path.exists(outputDirPath):
+        os.mkdir(outputDirPath)
     if not os.path.exists(gerberDirPath):
         os.mkdir(gerberDirPath)
     maxLayer = board.GetCopperLayerCount() + 5
@@ -131,6 +135,7 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                 # excellonFormat = (EXCELLON_WRITER.DECIMAL_FORMAT, EXCELLON_WRITER.SUPPRESS_LEADING)[self.zeros.GetSelection()]
                 try:
                     zipFilePath = createZip(
+                        pcbServiceName = 'Elecrow',
                         mergeNpth = False,
                         useAuxOrigin = True,
                         excellonFormat = pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT # pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING
