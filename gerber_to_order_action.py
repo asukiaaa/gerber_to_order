@@ -26,7 +26,7 @@ pcbServices = [
         "name": "Elecrow",
         "mergeNpth": False,
         "useAuxOrigin": True,
-        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT, # pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING
+        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT, # otherwize SUPPRESS_LEADING
         "layerRenameRules": [
             [ pcbnew.F_Cu,     '[boardProjectName].GTL' ],
             [ pcbnew.B_Cu,     '[boardProjectName].GBL' ],
@@ -131,7 +131,7 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
         self.name = "Gerber to order"
         self.category = "A descriptive category name"
         self.description = "A plugin to creage zip compressed gerber files to order PCB for Elecrow, FusionPCB or PCBWay."
-        self.show_toolbar_button = False # Optional, defaults to False
+        self.show_toolbar_button = False
         # self.icon_file_name = os.path.join(os.path.dirname(__file__), 'simple_plugin.png') # Optional, defaults to ""
 
     def Run(self):
@@ -140,22 +140,14 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                 wx.Dialog.__init__(self, parent, id=-1, title='Gerber to order')
                 self.panel = wx.Panel(self)
                 self.description = wx.StaticText(self.panel, wx.ID_ANY, "Export gerber files and zip files.", pos=(10,10))
-                # self.mergeNpth = wx.CheckBox(self.panel, wx.ID_ANY, getstr('MERGE',lang), pos=(30,40))
-                # self.useAuxOrigin = wx.CheckBox(self.panel, wx.ID_ANY, getstr('AUXORIG',lang), pos=(30,60))
-                # self.zeros = wx.RadioBox(self.panel,wx.ID_ANY, getstr('ZEROS',lang), pos=(30,90), choices=[getstr('DECIMAL',lang), getstr('SUPPRESS',lang)], style=wx.RA_HORIZONTAL)
                 self.execbtn = wx.Button(self.panel, wx.ID_ANY, 'Export', pos=(10,30))
                 self.clsbtn = wx.Button(self.panel, wx.ID_ANY, 'Close', pos=(100,30))
-                # self.mergeNpth.SetValue(mergeNpth)
-                # self.useAuxOrigin.SetValue(useAuxOrigin)
                 self.clsbtn.Bind(wx.EVT_BUTTON, self.OnClose)
                 self.execbtn.Bind(wx.EVT_BUTTON, self.OnExec)
             def OnClose(self,e):
                 e.Skip()
                 self.Close()
             def OnExec(self,e):
-                # mergeNpth = True if self.mergeNpth.GetValue() else False
-                # useAuxOrigin = True if self.useAuxOrigin.GetValue() else False
-                # excellonFormat = (EXCELLON_WRITER.DECIMAL_FORMAT, EXCELLON_WRITER.SUPPRESS_LEADING)[self.zeros.GetSelection()]
                 try:
                     zipFiles = []
                     for pcbService in pcbServices:
@@ -168,7 +160,6 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                             drillExtensionRenameTo = pcbService['drillExtensionRenameTo'],
                         )
                         zipFiles.append(path)
-                    # wx.MessageBox(getstr('COMPLETE')%zip_fname, 'Gerber Zip', wx.OK|wx.ICON_INFORMATION)
                     wx.MessageBox('Exported ' + str(zipFiles), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 except Exception as e:
                     wx.MessageBox('Error: ' + str(e), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
