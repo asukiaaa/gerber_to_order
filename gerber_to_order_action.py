@@ -4,8 +4,103 @@ import wx
 import locale
 import zipfile
 
-merge_npth = False
-use_aux_origin = True
+gerberDirName = "gerber_to_order"
+mergeNpth = False
+useAuxOrigin = True
+excellonFormat = pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT # pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING
+zipFileName = ""
+
+layers = [
+    [ pcbnew.F_Cu,     'GTL', None ],
+    [ pcbnew.B_Cu,     'GBL', None ],
+    [ pcbnew.F_SilkS,  'GTO', None ],
+    [ pcbnew.B_SilkS,  'GBO', None ],
+    [ pcbnew.F_Mask,   'GTS', None ],
+    [ pcbnew.B_Mask,   'GBS', None ],
+    [ pcbnew.Edge_Cuts,'GML', None ],
+    [ pcbnew.In1_Cu,   'GL2', None ],
+    [ pcbnew.In2_Cu,   'GL3', None ],
+    [ pcbnew.In3_Cu,   'GL4', None ],
+    [ pcbnew.In4_Cu,   'GL5', None ],
+]
+
+def removeFile(fileName):
+    if os.path.exists(fileName):
+        os.remove(fileName)
+
+def renameFile(src, dst):
+    removeFile(dst)
+    os.rename(src, dst)
+
+def createZip():
+    global zipFileName
+    board = pcbnew.GetBoard()
+    boardFileName = board.GetFileName()
+    boardDirPath = os.path.dirname(boardFileName)
+    boardProjectName = (os.path.splitext(os.path.basename(boardFileName)))[0]
+    gerberDirPath = '%s/%s' % (boardDirPath, gerberDirName)
+    drillFileName = '%s/%s.TXT' % (gerberDirPath, boardProjectName)
+    npthFileName = '%s/%s-NPTH.TXT' % (gerberDirPath, boardProjectName)
+    zipFileName = '%s/%s.zip' % (gerberDirPath, boardProjectName)
+    if not os.path.exists(gerberDirPath):
+        os.mkdir(gerberDirPath)
+    maxLayer = board.GetCopperLayerCount() + 5
+
+    # PLOT
+    pc = pcbnew.PLOT_CONTROLLER(board)
+    po = pc.GetPlotOptions()
+
+    po.SetOutputDirectory(gerberDirPath)
+    po.SetPlotValue(True)
+    po.SetPlotReference(True)
+    po.SetExcludeEdgeLayer(False)
+    po.SetLineWidth(pcbnew.FromMM(0.1))
+    po.SetSubtractMaskFromSilk(True)
+    po.SetUseAuxOrigin(useAuxOrigin)
+
+    for layer in layers:
+        targetname = '%s/%s.%s' % (gerberDirPath, boardProjectName, layer[1])
+        removeFile(targetname)
+    removeFile(drillFileName)
+    removeFile(npthFileName)
+    removeFile(zipFileName)
+
+    for i in range(maxLayer):
+        layer = layers[i]
+        pc.SetLayer(layer[0])
+        pc.OpenPlotfile(layer[1], pcbnew.PLOT_FORMAT_GERBER, layer[1])
+        pc.PlotLayer()
+        layer[2] = pc.GetPlotFileName()
+    pc.ClosePlot()
+
+    for i in range(maxLayer):
+        layer = layers[i]
+        targetName = '%s/%s.%s' % (gerberDirPath, boardProjectName, layer[1])
+        renameFile(layer[2],targetName)
+
+    # DRILL
+    ew = pcbnew.EXCELLON_WRITER(board)
+    ew.SetFormat(True, excellonFormat, 3, 3)
+    offset = pcbnew.wxPoint(0,0)
+    if(useAuxOrigin):
+        offset = board.GetAuxOrigin()
+    ew.SetOptions(False, False, offset, mergeNpth)
+    ew.CreateDrillandMapFilesSet(gerberDirPath,True,False)
+    if mergeNpth:
+        renameFile('%s/%s.drl' % (gerberDirPath, boardProjectName), drillFileName)
+    else:
+        renameFile('%s/%s-PTH.drl' % (gerberDirPath, boardProjectName), drillFileName)
+        renameFile('%s/%s-NPTH.drl' % (gerberDirPath, boardProjectName), npthFileName)
+
+    # ZIP
+    with zipfile.ZipFile(zipFileName,'w') as f:
+        for i in range(maxLayer):
+            layer = layers[i]
+            targetname = '%s/%s.%s' % (gerberDirPath, boardProjectName, layer[1])
+            f.write(targetname, os.path.basename(targetname))
+        f.write(drillFileName, os.path.basename(drillFileName))
+        if not mergeNpth:
+            f.write(npthFileName, os.path.basename(npthFileName))
 
 class GerberToOrderAction(pcbnew.ActionPlugin):
     def defaults(self):
@@ -26,19 +121,23 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                 # self.zeros = wx.RadioBox(self.panel,wx.ID_ANY, getstr('ZEROS',lang), pos=(30,90), choices=[getstr('DECIMAL',lang), getstr('SUPPRESS',lang)], style=wx.RA_HORIZONTAL)
                 self.execbtn = wx.Button(self.panel, wx.ID_ANY, 'exec', pos=(30,150))
                 self.clsbtn = wx.Button(self.panel, wx.ID_ANY, 'close', pos=(170,150))
-                # self.mergeNpth.SetValue(merge_npth)
-                # self.useAuxOrigin.SetValue(use_aux_origin)
+                # self.mergeNpth.SetValue(mergeNpth)
+                # self.useAuxOrigin.SetValue(useAuxOrigin)
                 self.clsbtn.Bind(wx.EVT_BUTTON, self.OnClose)
                 self.execbtn.Bind(wx.EVT_BUTTON, self.OnExec)
             def OnClose(self,e):
                 e.Skip()
                 self.Close()
             def OnExec(self,e):
-                # merge_npth = True if self.mergeNpth.GetValue() else False
-                # use_aux_origin = True if self.useAuxOrigin.GetValue() else False
-                # excellon_format = (EXCELLON_WRITER.DECIMAL_FORMAT, EXCELLON_WRITER.SUPPRESS_LEADING)[self.zeros.GetSelection()]
-                # Exec()
-                # wx.MessageBox(getstr('COMPLETE')%zip_fname, 'Gerber Zip', wx.OK|wx.ICON_INFORMATION)
+                # mergeNpth = True if self.mergeNpth.GetValue() else False
+                # useAuxOrigin = True if self.useAuxOrigin.GetValue() else False
+                # excellonFormat = (EXCELLON_WRITER.DECIMAL_FORMAT, EXCELLON_WRITER.SUPPRESS_LEADING)[self.zeros.GetSelection()]
+                try:
+                    createZip()
+                    # wx.MessageBox(getstr('COMPLETE')%zip_fname, 'Gerber Zip', wx.OK|wx.ICON_INFORMATION)
+                    wx.MessageBox(zipFileName, 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
+                except Exception as e:
+                    wx.MessageBox(str(e), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 e.Skip()
         dialog = Dialog(None)
         dialog.Center()
