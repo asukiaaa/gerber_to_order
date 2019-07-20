@@ -24,9 +24,11 @@ layers = [
 pcbServices = [
     {
         "name": "Elecrow",
-        "mergeNpth": False,
         "useAuxOrigin": True,
-        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT, # otherwize SUPPRESS_LEADING
+        "gerberProtelExtensions": False,
+        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
+        "drillMergeNpth": False,
+        "drillMinimalHeader": False,
         "layerRenameRules": [
             [ pcbnew.F_Cu,     '[boardProjectName].GTL' ],
             [ pcbnew.B_Cu,     '[boardProjectName].GBL' ],
@@ -41,7 +43,27 @@ pcbServices = [
             [ pcbnew.In4_Cu,   '[boardProjectName].G4' ],
         ],
         "drillExtensionRenameTo": 'TXT',
-    }
+    },
+    {
+        "name": "FusionPCB",
+        "useAuxOrigin": True,
+        "gerberProtelExtensions": True,
+        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
+        "drillMergeNpth": True,
+        "drillMinimalHeader": False,
+        "layerRenameRules": [],
+        "drillExtensionRenameTo": None,
+    },
+    {
+        "name": "PCBWay",
+        "useAuxOrigin": True,
+        "gerberProtelExtensions": False,
+        "excellonFormat": pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING,
+        "drillMergeNpth": False,
+        "drillMinimalHeader": True,
+        "layerRenameRules": [],
+        "drillExtensionRenameTo": None,
+    },
 ]
 
 def removeFile(fileName):
@@ -52,10 +74,12 @@ def renameFile(src, dst):
     removeFile(dst)
     os.rename(src, dst)
 
-def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat,
-              gerberProtelExtensions = False,
-              layerRenameRules = [],
-              drillExtensionRenameTo = None):
+def createZip(pcbServiceName, useAuxOrigin, excellonFormat,
+              gerberProtelExtensions,
+              layerRenameRules,
+              drillMergeNpth,
+              drillExtensionRenameTo,
+              drillMinimalHeader):
     board = pcbnew.GetBoard()
     boardFileName = board.GetFileName()
     boardDirPath = os.path.dirname(boardFileName)
@@ -106,12 +130,12 @@ def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat,
     ew = pcbnew.EXCELLON_WRITER(board)
     ew.SetFormat(True, excellonFormat, 3, 3)
     offset = pcbnew.wxPoint(0,0)
-    if(useAuxOrigin):
+    if useAuxOrigin:
         offset = board.GetAuxOrigin()
-    ew.SetOptions(False, False, offset, mergeNpth)
+    ew.SetOptions(False, drillMinimalHeader, offset, drillMergeNpth)
     ew.CreateDrillandMapFilesSet(gerberDirPath,True,False)
     if drillExtensionRenameTo is not None:
-        if mergeNpth:
+        if drillMergeNpth:
             renameFile('%s/%s.drl' % (gerberDirPath, boardProjectName),
                        '%s/%s.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
         else:
@@ -153,9 +177,11 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                     for pcbService in pcbServices:
                         path = createZip(
                             pcbServiceName = pcbService['name'],
-                            mergeNpth = pcbService['mergeNpth'],
                             useAuxOrigin = pcbService['useAuxOrigin'],
+                            gerberProtelExtensions = pcbService['gerberProtelExtensions'],
                             excellonFormat = pcbService['excellonFormat'],
+                            drillMergeNpth = pcbService['drillMergeNpth'],
+                            drillMinimalHeader = pcbService['drillMinimalHeader'],
                             layerRenameRules = pcbService['layerRenameRules'],
                             drillExtensionRenameTo = pcbService['drillExtensionRenameTo'],
                         )
