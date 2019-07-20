@@ -137,7 +137,7 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                     # wx.MessageBox(getstr('COMPLETE')%zip_fname, 'Gerber Zip', wx.OK|wx.ICON_INFORMATION)
                     wx.MessageBox(zipFileName, 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 except Exception as e:
-                    wx.MessageBox(str(e), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
+                    wx.MessageBox('Error: ' + str(e), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 e.Skip()
         dialog = Dialog(None)
         dialog.Center()
