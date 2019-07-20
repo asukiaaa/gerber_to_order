@@ -8,17 +8,40 @@ import zipfile
 outputDirName = "gerber_to_order"
 
 layers = [
-    [ pcbnew.F_Cu,     'GTL' ],
-    [ pcbnew.B_Cu,     'GBL' ],
-    [ pcbnew.F_SilkS,  'GTO' ],
-    [ pcbnew.B_SilkS,  'GBO' ],
-    [ pcbnew.F_Mask,   'GTS' ],
-    [ pcbnew.B_Mask,   'GBS' ],
-    [ pcbnew.Edge_Cuts,'GML' ],
-    [ pcbnew.In1_Cu,   'GL2' ],
-    [ pcbnew.In2_Cu,   'GL3' ],
-    [ pcbnew.In3_Cu,   'GL4' ],
-    [ pcbnew.In4_Cu,   'GL5' ],
+    [ pcbnew.F_Cu,      'F_Cu' ],
+    [ pcbnew.B_Cu,      'B_Cu' ],
+    [ pcbnew.F_SilkS,   'F_Silks' ],
+    [ pcbnew.B_SilkS,   'B_Silks' ],
+    [ pcbnew.F_Mask,    'F_Mask' ],
+    [ pcbnew.B_Mask,    'B_Mask' ],
+    [ pcbnew.Edge_Cuts, 'Edge_Cuts' ],
+    [ pcbnew.In1_Cu,    'In1_Cu' ],
+    [ pcbnew.In2_Cu,    'In2_Cu' ],
+    [ pcbnew.In3_Cu,    'In3_Cu' ],
+    [ pcbnew.In4_Cu,    'In4_Cu' ],
+]
+
+pcbServices = [
+    {
+        "name": "Elecrow",
+        "mergeNpth": False,
+        "useAuxOrigin": True,
+        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT, # pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING
+        "layerRenameRules": [
+            [ pcbnew.F_Cu,     '[boardProjectName].GTL' ],
+            [ pcbnew.B_Cu,     '[boardProjectName].GBL' ],
+            [ pcbnew.F_SilkS,  '[boardProjectName].GTO' ],
+            [ pcbnew.B_SilkS,  '[boardProjectName].GBO' ],
+            [ pcbnew.F_Mask,   '[boardProjectName].GTS' ],
+            [ pcbnew.B_Mask,   '[boardProjectName].GBS' ],
+            [ pcbnew.Edge_Cuts,'[boardProjectName].GML' ],
+            [ pcbnew.In1_Cu,   '[boardProjectName].G1' ],
+            [ pcbnew.In2_Cu,   '[boardProjectName].G2' ],
+            [ pcbnew.In3_Cu,   '[boardProjectName].G3' ],
+            [ pcbnew.In4_Cu,   '[boardProjectName].G4' ],
+        ],
+        "drillExtensionRenameTo": 'TXT',
+    }
 ]
 
 def removeFile(fileName):
@@ -29,7 +52,10 @@ def renameFile(src, dst):
     removeFile(dst)
     os.rename(src, dst)
 
-def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat):
+def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat,
+              gerberProtelExtensions = False,
+              layerRenameRules = [],
+              drillExtensionRenameTo = None):
     board = pcbnew.GetBoard()
     boardFileName = board.GetFileName()
     boardDirPath = os.path.dirname(boardFileName)
@@ -38,9 +64,8 @@ def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat):
     outputDirPath = '%s/%s' % (boardDirPath, outputDirName)
     gerberDirName = '%s_for_%s' % (boardProjectName, pcbServiceName)
     gerberDirPath = '%s/%s' % (outputDirPath, gerberDirName)
-    drillFilePath = '%s/%s.TXT' % (gerberDirPath, boardProjectName)
-    npthFilePath = '%s/%s-NPTH.TXT' % (gerberDirPath, boardProjectName)
     zipFilePath = '%s/%s.zip' % (outputDirPath, gerberDirName)
+
     if not os.path.exists(outputDirPath):
         os.mkdir(outputDirPath)
     if os.path.exists(gerberDirPath):
@@ -59,27 +84,23 @@ def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat):
     po.SetLineWidth(pcbnew.FromMM(0.1))
     po.SetSubtractMaskFromSilk(True)
     po.SetUseAuxOrigin(useAuxOrigin)
+    po.SetUseGerberProtelExtensions(gerberProtelExtensions)
 
-    for layer in layers:
-        targetname = '%s/%s.%s' % (gerberDirPath, boardProjectName, layer[1])
-        removeFile(targetname)
-    removeFile(drillFilePath)
-    removeFile(npthFilePath)
-    removeFile(zipFilePath)
-
-    plotFileNames = []
     for i in range(targetLayerCount):
         layer = layers[i]
+        layerTypeName = layer[1]
         pc.SetLayer(layer[0])
-        pc.OpenPlotfile(layer[1], pcbnew.PLOT_FORMAT_GERBER, layer[1])
+        pc.OpenPlotfile(layerTypeName, pcbnew.PLOT_FORMAT_GERBER, layerTypeName)
         pc.PlotLayer()
-        plotFileNames.append(pc.GetPlotFileName())
-    pc.ClosePlot()
+        plotFilePath = pc.GetPlotFileName()
 
-    for i in range(targetLayerCount):
-        layer = layers[i]
-        newFileName = '%s/%s.%s' % (gerberDirPath, boardProjectName, layer[1])
-        renameFile(plotFileNames[i], newFileName)
+        if len(layerRenameRules) > 0:
+            layer = layers[i]
+            newFileName = layerRenameRules[i][1] # TODO select by layer type
+            newFileName = newFileName.replace('[boardProjectName]', boardProjectName)
+            newFilePath = '%s/%s' % (gerberDirPath, newFileName)
+            renameFile(plotFilePath, newFilePath)
+    pc.ClosePlot()
 
     # DRILL
     ew = pcbnew.EXCELLON_WRITER(board)
@@ -89,13 +110,18 @@ def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat):
         offset = board.GetAuxOrigin()
     ew.SetOptions(False, False, offset, mergeNpth)
     ew.CreateDrillandMapFilesSet(gerberDirPath,True,False)
-    if mergeNpth:
-        renameFile('%s/%s.drl' % (gerberDirPath, boardProjectName), drillFilePath)
-    else:
-        renameFile('%s/%s-PTH.drl' % (gerberDirPath, boardProjectName), drillFilePath)
-        renameFile('%s/%s-NPTH.drl' % (gerberDirPath, boardProjectName), npthFilePath)
+    if drillExtensionRenameTo is not None:
+        if mergeNpth:
+            renameFile('%s/%s.drl' % (gerberDirPath, boardProjectName),
+                       '%s/%s.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
+        else:
+            renameFile('%s/%s-PTH.drl' % (gerberDirPath, boardProjectName),
+                       '%s/%s-PTH.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
+            renameFile('%s/%s-NPTH.drl' % (gerberDirPath, boardProjectName),
+                       '%s/%s-NPTH.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
 
     # ZIP
+    removeFile(zipFilePath)
     shutil.make_archive(zipFilePath, 'zip', outputDirPath, gerberDirName)
 
     return zipFilePath
@@ -131,14 +157,19 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                 # useAuxOrigin = True if self.useAuxOrigin.GetValue() else False
                 # excellonFormat = (EXCELLON_WRITER.DECIMAL_FORMAT, EXCELLON_WRITER.SUPPRESS_LEADING)[self.zeros.GetSelection()]
                 try:
-                    zipFilePath = createZip(
-                        pcbServiceName = 'Elecrow',
-                        mergeNpth = False,
-                        useAuxOrigin = True,
-                        excellonFormat = pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT # pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING
-                    )
+                    zipFiles = []
+                    for pcbService in pcbServices:
+                        path = createZip(
+                            pcbServiceName = pcbService['name'],
+                            mergeNpth = pcbService['mergeNpth'],
+                            useAuxOrigin = pcbService['useAuxOrigin'],
+                            excellonFormat = pcbService['excellonFormat'],
+                            layerRenameRules = pcbService['layerRenameRules'],
+                            drillExtensionRenameTo = pcbService['drillExtensionRenameTo'],
+                        )
+                        zipFiles.append(path)
                     # wx.MessageBox(getstr('COMPLETE')%zip_fname, 'Gerber Zip', wx.OK|wx.ICON_INFORMATION)
-                    wx.MessageBox(zipFilePath, 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
+                    wx.MessageBox('Exported ' + str(zipFiles), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 except Exception as e:
                     wx.MessageBox('Error: ' + str(e), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 e.Skip()
