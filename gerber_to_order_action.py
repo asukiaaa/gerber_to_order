@@ -8,17 +8,17 @@ import zipfile
 outputDirName = "gerber_to_order"
 
 layers = [
-    [ pcbnew.F_Cu,     'GTL', None ],
-    [ pcbnew.B_Cu,     'GBL', None ],
-    [ pcbnew.F_SilkS,  'GTO', None ],
-    [ pcbnew.B_SilkS,  'GBO', None ],
-    [ pcbnew.F_Mask,   'GTS', None ],
-    [ pcbnew.B_Mask,   'GBS', None ],
-    [ pcbnew.Edge_Cuts,'GML', None ],
-    [ pcbnew.In1_Cu,   'GL2', None ],
-    [ pcbnew.In2_Cu,   'GL3', None ],
-    [ pcbnew.In3_Cu,   'GL4', None ],
-    [ pcbnew.In4_Cu,   'GL5', None ],
+    [ pcbnew.F_Cu,     'GTL' ],
+    [ pcbnew.B_Cu,     'GBL' ],
+    [ pcbnew.F_SilkS,  'GTO' ],
+    [ pcbnew.B_SilkS,  'GBO' ],
+    [ pcbnew.F_Mask,   'GTS' ],
+    [ pcbnew.B_Mask,   'GBS' ],
+    [ pcbnew.Edge_Cuts,'GML' ],
+    [ pcbnew.In1_Cu,   'GL2' ],
+    [ pcbnew.In2_Cu,   'GL3' ],
+    [ pcbnew.In3_Cu,   'GL4' ],
+    [ pcbnew.In4_Cu,   'GL5' ],
 ]
 
 def removeFile(fileName):
@@ -46,7 +46,7 @@ def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat):
     if os.path.exists(gerberDirPath):
         shutil.rmtree(gerberDirPath)
     os.mkdir(gerberDirPath)
-    maxLayer = board.GetCopperLayerCount() + 5
+    targetLayerCount = board.GetCopperLayerCount() + 5
 
     # PLOT
     pc = pcbnew.PLOT_CONTROLLER(board)
@@ -67,18 +67,19 @@ def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat):
     removeFile(npthFilePath)
     removeFile(zipFilePath)
 
-    for i in range(maxLayer):
+    plotFileNames = []
+    for i in range(targetLayerCount):
         layer = layers[i]
         pc.SetLayer(layer[0])
         pc.OpenPlotfile(layer[1], pcbnew.PLOT_FORMAT_GERBER, layer[1])
         pc.PlotLayer()
-        layer[2] = pc.GetPlotFileName()
+        plotFileNames.append(pc.GetPlotFileName())
     pc.ClosePlot()
 
-    for i in range(maxLayer):
+    for i in range(targetLayerCount):
         layer = layers[i]
-        targetName = '%s/%s.%s' % (gerberDirPath, boardProjectName, layer[1])
-        renameFile(layer[2],targetName)
+        newFileName = '%s/%s.%s' % (gerberDirPath, boardProjectName, layer[1])
+        renameFile(plotFileNames[i], newFileName)
 
     # DRILL
     ew = pcbnew.EXCELLON_WRITER(board)
