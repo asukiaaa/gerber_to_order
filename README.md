@@ -9,5 +9,6 @@ MIT
 # References
 
 - [Python Plugin Development for Pcbnew ](http://docs.kicad-pcb.org/doxygen/md_Documentation_development_pcbnew-plugins.html)
+- [KiCad Pcbnew Python Scripting: pcbnew Namespace Reference](http://docs.kicad-pcb.org/doxygen-python/namespacepcbnew.html)
 - [KiCad アクションスクリプト GerberZip](https://www.g200kg.com/archives/2019/05/kicad-gerberzip.html)
 - [kicad-action-plugins/action_menu_gerber_zip.py](https://github.com/g200kg/kicad-action-plugins/blob/master/action_menu_gerber_zip.py)
