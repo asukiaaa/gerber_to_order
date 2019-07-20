@@ -36,10 +36,11 @@ def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat):
     boardProjectName = (os.path.splitext(os.path.basename(boardFileName)))[0]
 
     outputDirPath = '%s/%s' % (boardDirPath, outputDirName)
-    gerberDirPath = '%s/%s' % (outputDirPath, pcbServiceName)
+    gerberDirName = '%s_for_%s' % (boardProjectName, pcbServiceName)
+    gerberDirPath = '%s/%s' % (outputDirPath, gerberDirName)
     drillFilePath = '%s/%s.TXT' % (gerberDirPath, boardProjectName)
     npthFilePath = '%s/%s-NPTH.TXT' % (gerberDirPath, boardProjectName)
-    zipFilePath = '%s/%s_for_%s.zip' % (outputDirPath, boardProjectName, pcbServiceName)
+    zipFilePath = '%s/%s.zip' % (outputDirPath, gerberDirName)
     if not os.path.exists(outputDirPath):
         os.mkdir(outputDirPath)
     if os.path.exists(gerberDirPath):
@@ -94,14 +95,7 @@ def createZip(pcbServiceName, mergeNpth, useAuxOrigin, excellonFormat):
         renameFile('%s/%s-NPTH.drl' % (gerberDirPath, boardProjectName), npthFilePath)
 
     # ZIP
-    with zipfile.ZipFile(zipFilePath,'w') as f:
-        for i in range(maxLayer):
-            layer = layers[i]
-            targetname = '%s/%s.%s' % (gerberDirPath, boardProjectName, layer[1])
-            f.write(targetname, os.path.basename(targetname))
-        f.write(drillFilePath, os.path.basename(drillFilePath))
-        if not mergeNpth:
-            f.write(npthFilePath, os.path.basename(npthFilePath))
+    shutil.make_archive(zipFilePath, 'zip', outputDirPath, gerberDirName)
 
     return zipFilePath
 
