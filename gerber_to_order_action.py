@@ -70,36 +70,21 @@ def removeFile(fileName):
     if os.path.exists(fileName):
         os.remove(fileName)
 
+
 def renameFile(src, dst):
     removeFile(dst)
     os.rename(src, dst)
 
-def createZip(pcbServiceName,
-              useAuxOrigin,
-              excellonFormat,
-              gerberProtelExtensions,
-              layerRenameRules,
-              drillMergeNpth,
-              drillExtensionRenameTo,
-              drillMinimalHeader):
-    board = pcbnew.GetBoard()
-    boardFileName = board.GetFileName()
-    boardDirPath = os.path.dirname(boardFileName)
-    boardProjectName = (os.path.splitext(os.path.basename(boardFileName)))[0]
 
-    outputDirPath = '%s/%s' % (boardDirPath, outputDirName)
-    gerberDirName = '%s_for_%s' % (boardProjectName, pcbServiceName)
-    gerberDirPath = '%s/%s' % (outputDirPath, gerberDirName)
-    zipFilePath = '%s/%s.zip' % (outputDirPath, gerberDirName)
-
-    if not os.path.exists(outputDirPath):
-        os.mkdir(outputDirPath)
-    if os.path.exists(gerberDirPath):
-        shutil.rmtree(gerberDirPath)
-    os.mkdir(gerberDirPath)
+def plotLayers(
+        board,
+        gerberDirPath,
+        useAuxOrigin,
+        gerberProtelExtensions,
+        layerRenameRules,
+        boardProjectName,
+):
     targetLayerCount = board.GetCopperLayerCount() + 5
-
-    # PLOT
     pc = pcbnew.PLOT_CONTROLLER(board)
     po = pc.GetPlotOptions()
 
@@ -127,7 +112,17 @@ def createZip(pcbServiceName,
             renameFile(plotFilePath, newFilePath)
     pc.ClosePlot()
 
-    # DRILL
+
+def plotDrill(
+        board,
+        gerberDirPath,
+        boardProjectName,
+        excellonFormat,
+        useAuxOrigin,
+        drillMinimalHeader,
+        drillMergeNpth,
+        drillExtensionRenameTo,
+):
     ew = pcbnew.EXCELLON_WRITER(board)
     ew.SetFormat(True, excellonFormat, 3, 3)
     offset = pcbnew.wxPoint(0,0)
@@ -145,11 +140,59 @@ def createZip(pcbServiceName,
             renameFile('%s/%s-NPTH.drl' % (gerberDirPath, boardProjectName),
                        '%s/%s-NPTH.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
 
+
+def createZip(
+        pcbServiceName,
+        useAuxOrigin,
+        excellonFormat,
+        gerberProtelExtensions,
+        layerRenameRules,
+        drillMergeNpth,
+        drillExtensionRenameTo,
+        drillMinimalHeader
+):
+    board = pcbnew.GetBoard()
+    boardFileName = board.GetFileName()
+    boardDirPath = os.path.dirname(boardFileName)
+    boardProjectName = (os.path.splitext(os.path.basename(boardFileName)))[0]
+
+    outputDirPath = '%s/%s' % (boardDirPath, outputDirName)
+    gerberDirName = '%s_for_%s' % (boardProjectName, pcbServiceName)
+    gerberDirPath = '%s/%s' % (outputDirPath, gerberDirName)
+    zipFilePath = '%s/%s.zip' % (outputDirPath, gerberDirName)
+
+    if not os.path.exists(outputDirPath):
+        os.mkdir(outputDirPath)
+    if os.path.exists(gerberDirPath):
+        shutil.rmtree(gerberDirPath)
+    os.mkdir(gerberDirPath)
+
+    plotLayers(
+        board = board,
+        gerberDirPath = gerberDirPath,
+        useAuxOrigin = useAuxOrigin,
+        gerberProtelExtensions = gerberProtelExtensions,
+        layerRenameRules = layerRenameRules,
+        boardProjectName = boardProjectName,
+    )
+
+    plotDrill(
+        board = board,
+        gerberDirPath = gerberDirPath,
+        boardProjectName = boardProjectName,
+        excellonFormat = excellonFormat,
+        useAuxOrigin = useAuxOrigin,
+        drillMinimalHeader = drillMinimalHeader,
+        drillMergeNpth = drillMergeNpth,
+        drillExtensionRenameTo = drillExtensionRenameTo,
+    )
+
     # ZIP
     removeFile(zipFilePath)
     shutil.make_archive(zipFilePath, 'zip', outputDirPath, gerberDirName)
 
     return zipFilePath
+
 
 class GerberToOrderAction(pcbnew.ActionPlugin):
     def defaults(self):
