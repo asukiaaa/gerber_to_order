@@ -4,6 +4,7 @@ import shutil
 import wx
 import locale
 import zipfile
+import datetime
 
 outputDirName = "gerber_to_order"
 
@@ -159,7 +160,8 @@ def createZip(
     outputDirPath = '%s/%s' % (boardDirPath, outputDirName)
     gerberDirName = '%s_for_%s' % (boardProjectName, pcbServiceName)
     gerberDirPath = '%s/%s' % (outputDirPath, gerberDirName)
-    zipFilePath = '%s/%s.zip' % (outputDirPath, gerberDirName)
+    timeStamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    zipFilePath = '%s/%s_%s.zip' % (outputDirPath, timeStamp, gerberDirName)
 
     if not os.path.exists(outputDirPath):
         os.mkdir(outputDirPath)
@@ -187,9 +189,8 @@ def createZip(
         drillExtensionRenameTo = drillExtensionRenameTo,
     )
 
-    # ZIP
     removeFile(zipFilePath)
-    shutil.make_archive(zipFilePath, 'zip', outputDirPath, gerberDirName)
+    shutil.make_archive(os.path.splitext(zipFilePath)[0], 'zip', outputDirPath, gerberDirName)
 
     return zipFilePath
 
