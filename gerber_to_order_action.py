@@ -4,7 +4,7 @@ import shutil
 import wx
 import locale
 import zipfile
-import datetime
+# import datetime
 
 outputDirName = "gerber_to_order"
 
@@ -66,6 +66,7 @@ pcbServices = [
         "drillExtensionRenameTo": None,
     },
 ]
+
 
 def removeFile(fileName):
     if os.path.exists(fileName):
@@ -160,8 +161,9 @@ def createZip(
     outputDirPath = '%s/%s' % (boardDirPath, outputDirName)
     gerberDirName = '%s_for_%s' % (boardProjectName, pcbServiceName)
     gerberDirPath = '%s/%s' % (outputDirPath, gerberDirName)
-    timeStamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    zipFilePath = '%s/%s_%s.zip' % (outputDirPath, timeStamp, gerberDirName)
+    # timeStamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    # zipFilePath = '%s/%s_%s.zip' % (outputDirPath, timeStamp, gerberDirName)
+    zipFilePath = '%s/%s.zip' % (outputDirPath, gerberDirName)
 
     if not os.path.exists(outputDirPath):
         os.mkdir(outputDirPath)
