@@ -29,19 +29,19 @@ pcbServices = [
         "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
         "drillMergeNpth": False,
         "drillMinimalHeader": False,
-        "layerRenameRules": [
-            [ pcbnew.F_Cu,     '[boardProjectName].GTL' ],
-            [ pcbnew.B_Cu,     '[boardProjectName].GBL' ],
-            [ pcbnew.F_SilkS,  '[boardProjectName].GTO' ],
-            [ pcbnew.B_SilkS,  '[boardProjectName].GBO' ],
-            [ pcbnew.F_Mask,   '[boardProjectName].GTS' ],
-            [ pcbnew.B_Mask,   '[boardProjectName].GBS' ],
-            [ pcbnew.Edge_Cuts,'[boardProjectName].GML' ],
-            [ pcbnew.In1_Cu,   '[boardProjectName].G1' ],
-            [ pcbnew.In2_Cu,   '[boardProjectName].G2' ],
-            [ pcbnew.In3_Cu,   '[boardProjectName].G3' ],
-            [ pcbnew.In4_Cu,   '[boardProjectName].G4' ],
-        ],
+        "layerRenameRules": {
+            pcbnew.F_Cu:      '[boardProjectName].GTL',
+            pcbnew.B_Cu:      '[boardProjectName].GBL',
+            pcbnew.F_SilkS:   '[boardProjectName].GTO',
+            pcbnew.B_SilkS:   '[boardProjectName].GBO',
+            pcbnew.F_Mask:    '[boardProjectName].GTS',
+            pcbnew.B_Mask:    '[boardProjectName].GBS',
+            pcbnew.Edge_Cuts: '[boardProjectName].GML',
+            pcbnew.In1_Cu:    '[boardProjectName].G1',
+            pcbnew.In2_Cu:    '[boardProjectName].G2',
+            pcbnew.In3_Cu:    '[boardProjectName].G3',
+            pcbnew.In4_Cu:    '[boardProjectName].G4',
+        },
         "drillExtensionRenameTo": 'TXT',
     },
     {
@@ -51,7 +51,7 @@ pcbServices = [
         "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
         "drillMergeNpth": True,
         "drillMinimalHeader": False,
-        "layerRenameRules": [],
+        "layerRenameRules": {},
         "drillExtensionRenameTo": None,
     },
     {
@@ -61,7 +61,7 @@ pcbServices = [
         "excellonFormat": pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING,
         "drillMergeNpth": False,
         "drillMinimalHeader": True,
-        "layerRenameRules": [],
+        "layerRenameRules": {},
         "drillExtensionRenameTo": None,
     },
 ]
@@ -74,7 +74,9 @@ def renameFile(src, dst):
     removeFile(dst)
     os.rename(src, dst)
 
-def createZip(pcbServiceName, useAuxOrigin, excellonFormat,
+def createZip(pcbServiceName,
+              useAuxOrigin,
+              excellonFormat,
               gerberProtelExtensions,
               layerRenameRules,
               drillMergeNpth,
@@ -111,16 +113,15 @@ def createZip(pcbServiceName, useAuxOrigin, excellonFormat,
     po.SetUseGerberProtelExtensions(gerberProtelExtensions)
 
     for i in range(targetLayerCount):
-        layer = layers[i]
-        layerTypeName = layer[1]
-        pc.SetLayer(layer[0])
+        layerId = layers[i][0]
+        layerTypeName = layers[i][1]
+        pc.SetLayer(layerId)
         pc.OpenPlotfile(layerTypeName, pcbnew.PLOT_FORMAT_GERBER, layerTypeName)
         pc.PlotLayer()
         plotFilePath = pc.GetPlotFileName()
 
         if len(layerRenameRules) > 0:
-            layer = layers[i]
-            newFileName = layerRenameRules[i][1] # TODO select by layer type
+            newFileName = layerRenameRules[layerId]
             newFileName = newFileName.replace('[boardProjectName]', boardProjectName)
             newFilePath = '%s/%s' % (gerberDirPath, newFileName)
             renameFile(plotFilePath, newFilePath)
