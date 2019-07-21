@@ -186,7 +186,14 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                             drillExtensionRenameTo = pcbService['drillExtensionRenameTo'],
                         )
                         zipFiles.append(path)
-                    wx.MessageBox('Exported ' + str(zipFiles), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
+                    message = ''
+                    if len(zipFiles) > 0:
+                        message = 'Exported\n'
+                        message += '\n'.join(map(lambda path: os.path.basename(path), zipFiles))
+                        message += '\nat\n' + os.path.dirname(zipFiles[0])
+                    else:
+                        message = 'Select some service to export.'
+                    wx.MessageBox(message, 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 except Exception as e:
                     wx.MessageBox('Error: ' + str(e), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 e.Skip()
