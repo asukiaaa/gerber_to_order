@@ -1,5 +1,6 @@
 import pcbnew
 import os
+import time
 import shutil
 import wx
 import locale
@@ -7,6 +8,8 @@ import zipfile
 # import datetime
 
 outputDirName = "gerber_to_order"
+retryCount = 10
+retryWaitSecond = 0.1
 
 layers = [
     [ pcbnew.F_Cu,      'F_Cu' ],
@@ -68,14 +71,44 @@ pcbServices = [
 ]
 
 
-def removeFile(fileName):
+def removeFileIfExists(fileName, retryRemainingCount = retryCount):
     if os.path.exists(fileName):
         os.remove(fileName)
+        while (os.path.exists(fileName) and retryRemainingCount > 0):
+            time.sleep(retryWaitSecond)
+            retryRemainingCount -= 1
 
 
-def renameFile(src, dst):
-    removeFile(dst)
-    os.rename(src, dst)
+def renameFileIfExists(src, dst):
+    if os.path.exists(src):
+        renameFile(src, dst)
+
+
+def renameFile(src, dst, retryRemainingCount = retryCount):
+    try:
+        removeFileIfExists(dst)
+        os.rename(src, dst)
+    except Exception:
+        if retryRemainingCount > 0:
+            time.sleep(retryWaitSecond)
+            renameFile(src, dst, retryRemainingCount-1)
+        else:
+            raise Exception('Cannot rename %s to %s' % (src, dst))
+
+
+def removeDirIfExists(dirPath, retryRemainingCount = retryCount):
+    if os.path.exists(dirPath):
+        shutil.rmtree(dirPath)
+        while (os.path.exists(dirPath) and retryRemainingCount > 0):
+            time.sleep(retryWaitSecond)
+            retryRemainingCount -= 1
+
+
+def makeDir(dirPath, retryRemainingCount = retryCount):
+    os.mkdir(dirPath)
+    while (not os.path.exists(dirPath) and retryRemainingCount > 0):
+        time.sleep(retryWaitSecond)
+        retryRemainingCount -= 1
 
 
 def plotLayers(
@@ -99,20 +132,24 @@ def plotLayers(
     po.SetUseAuxOrigin(useAuxOrigin)
     po.SetUseGerberProtelExtensions(gerberProtelExtensions)
 
+    plotFiles = []
     for i in range(targetLayerCount):
         layerId = layers[i][0]
         layerTypeName = layers[i][1]
         pc.SetLayer(layerId)
         pc.OpenPlotfile(layerTypeName, pcbnew.PLOT_FORMAT_GERBER, layerTypeName)
         pc.PlotLayer()
-        plotFilePath = pc.GetPlotFileName()
+        plotFiles.append(pc.GetPlotFileName())
+    pc.ClosePlot()
 
-        if len(layerRenameRules) > 0:
+    if len(layerRenameRules) > 0:
+        for i in range(targetLayerCount):
+            plotFilePath = plotFiles[i]
+            layerId = layers[i][0]
             newFileName = layerRenameRules[layerId]
             newFileName = newFileName.replace('[boardProjectName]', boardProjectName)
             newFilePath = '%s/%s' % (gerberDirPath, newFileName)
             renameFile(plotFilePath, newFilePath)
-    pc.ClosePlot()
 
 
 def plotDrill(
@@ -134,13 +171,13 @@ def plotDrill(
     ew.CreateDrillandMapFilesSet(gerberDirPath,True,False)
     if drillExtensionRenameTo is not None:
         if drillMergeNpth:
-            renameFile('%s/%s.drl' % (gerberDirPath, boardProjectName),
-                       '%s/%s.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
+            renameFileIfExists('%s/%s.drl' % (gerberDirPath, boardProjectName),
+                               '%s/%s.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
         else:
-            renameFile('%s/%s-PTH.drl' % (gerberDirPath, boardProjectName),
-                       '%s/%s-PTH.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
-            renameFile('%s/%s-NPTH.drl' % (gerberDirPath, boardProjectName),
-                       '%s/%s-NPTH.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
+            renameFileIfExists('%s/%s-PTH.drl' % (gerberDirPath, boardProjectName),
+                               '%s/%s-PTH.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
+            renameFileIfExists('%s/%s-NPTH.drl' % (gerberDirPath, boardProjectName),
+                               '%s/%s-NPTH.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
 
 
 def createZip(
@@ -166,10 +203,9 @@ def createZip(
     zipFilePath = '%s/%s.zip' % (outputDirPath, gerberDirName)
 
     if not os.path.exists(outputDirPath):
-        os.mkdir(outputDirPath)
-    if os.path.exists(gerberDirPath):
-        shutil.rmtree(gerberDirPath)
-    os.mkdir(gerberDirPath)
+        makeDir(outputDirPath)
+    removeDirIfExists(gerberDirPath)
+    makeDir(gerberDirPath)
 
     plotLayers(
         board = board,
@@ -191,7 +227,7 @@ def createZip(
         drillExtensionRenameTo = drillExtensionRenameTo,
     )
 
-    removeFile(zipFilePath)
+    removeFileIfExists(zipFilePath)
     shutil.make_archive(os.path.splitext(zipFilePath)[0], 'zip', outputDirPath, gerberDirName)
 
     return zipFilePath
