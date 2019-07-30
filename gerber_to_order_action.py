@@ -246,7 +246,7 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
             def __init__(self, parent):
                 wx.Dialog.__init__(self, parent, id=-1, title='Gerber to order')
                 panel = wx.Panel(self)
-                description = wx.StaticText(panel, label="Export gerber files and zip files.")
+                description = wx.StaticText(panel, label="Export gerber and zip files.")
                 execbtn = wx.Button(panel, label='Export')
                 clsbtn = wx.Button(panel, label='Close')
                 clsbtn.Bind(wx.EVT_BUTTON, self.OnClose)
