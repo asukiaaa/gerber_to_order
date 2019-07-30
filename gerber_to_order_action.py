@@ -255,8 +255,8 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                 buttonSizer.Add(execbtn)
                 buttonSizer.Add(clsbtn)
                 layout = wx.BoxSizer(wx.VERTICAL)
-                layout.Add(description)
-                layout.Add(buttonSizer)
+                layout.Add(description, flag=wx.EXPAND|wx.BOTTOM|wx.TOP|wx.LEFT, border=5)
+                layout.Add(buttonSizer, flag=wx.EXPAND|wx.LEFT, border=5)
                 panel.SetSizer(layout)
             def OnClose(self,e):
                 e.Skip()
