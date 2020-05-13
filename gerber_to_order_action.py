@@ -68,6 +68,28 @@ pcbServices = [
         "layerRenameRules": {},
         "drillExtensionRenameTo": None,
     },
+    {
+        # https://support.jlcpcb.com/article/22-how-to-generate-the-gerber-files
+        # https://support.jlcpcb.com/article/29-suggested-naming-patterns
+        "name": "JLCPCB",
+        "useAuxOrigin": False,
+        "gerberProtelExtensions": True,
+        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
+        "drillMergeNpth": True,
+        "drillMinimalHeader": False,
+        "layerRenameRules": {
+            pcbnew.F_Cu:      '[boardProjectName].GTL',
+            pcbnew.B_Cu:      '[boardProjectName].GBL',
+            pcbnew.F_SilkS:   '[boardProjectName].GTO',
+            pcbnew.B_SilkS:   '[boardProjectName].GBO',
+            pcbnew.F_Mask:    '[boardProjectName].GTS',
+            pcbnew.B_Mask:    '[boardProjectName].GBS',
+            pcbnew.Edge_Cuts: '[boardProjectName].GKO',
+            pcbnew.In1_Cu:    '[boardProjectName].G2L',
+            pcbnew.In2_Cu:    '[boardProjectName].G3L',
+        },
+        "drillExtensionRenameTo": 'XLN',
+    },
 ]
 
 
