@@ -27,6 +27,7 @@ layers = [
 
 pcbServices = [
     {
+        # https://www.elecrow.com/pcb-manufacturing.html
         "name": "Elecrow",
         "useAuxOrigin": True,
         "gerberProtelExtensions": False,
@@ -49,24 +50,42 @@ pcbServices = [
         "drillExtensionRenameTo": 'TXT',
     },
     {
+        # https://wiki.seeedstudio.com/Service_for_Fusion_PCB/
+        # http://support.seeedstudio.com/knowledgebase/articles/1824574-how-to-generate-gerber-and-drill-files-from-kicad
         "name": "FusionPCB",
         "useAuxOrigin": True,
         "gerberProtelExtensions": True,
         "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
         "drillMergeNpth": True,
         "drillMinimalHeader": False,
-        "layerRenameRules": {},
-        "drillExtensionRenameTo": None,
+        "layerRenameRules": {
+            pcbnew.F_Cu:      '[boardProjectName].GTL',
+            pcbnew.B_Cu:      '[boardProjectName].GBL',
+            pcbnew.F_SilkS:   '[boardProjectName].GTO',
+            pcbnew.B_SilkS:   '[boardProjectName].GBO',
+            pcbnew.F_Mask:    '[boardProjectName].GTS',
+            pcbnew.B_Mask:    '[boardProjectName].GBS',
+        },
+        "drillExtensionRenameTo": 'TXT',
     },
     {
+        # https://www.pcbway.com/blog/help_center/Generate_Gerber_file_from_Kicad.html
         "name": "PCBWay",
         "useAuxOrigin": True,
         "gerberProtelExtensions": False,
         "excellonFormat": pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING,
         "drillMergeNpth": False,
         "drillMinimalHeader": True,
-        "layerRenameRules": {},
-        "drillExtensionRenameTo": None,
+        "layerRenameRules": {
+            pcbnew.F_Cu:      '[boardProjectName].GTL',
+            pcbnew.B_Cu:      '[boardProjectName].GBL',
+            pcbnew.F_SilkS:   '[boardProjectName].GTO',
+            pcbnew.B_SilkS:   '[boardProjectName].GBO',
+            pcbnew.F_Mask:    '[boardProjectName].GTS',
+            pcbnew.B_Mask:    '[boardProjectName].GBS',
+            pcbnew.Edge_Cuts: '[boardProjectName].GML/GKO',
+        },
+        "drillExtensionRenameTo": 'TXT',
     },
     {
         # https://support.jlcpcb.com/article/22-how-to-generate-the-gerber-files

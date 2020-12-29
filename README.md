@@ -34,6 +34,15 @@ git clone https://github.com/asukiaaa/gerber_to_order.git
 
 Then start pcbnew of KiCad and select Tools -> External plugins -> Gerber to Order.
 
+## Supported manufacturers
+
+Name | Information url
+---- | ----
+Elecrow | [Elecrow PCB Manufacturing](https://www.elecrow.com/pcb-manufacturing.html)
+PCBWay | [Generate Gerber from KiCad 5.1.6](https://www.pcbway.com/blog/help_center/Generate_Gerber_file_from_Kicad_5_1_6.html)
+FusionPCB | [Service for Fusion PCB](https://wiki.seeedstudio.com/Service_for_Fusion_PCB)
+JLCPCB | [How to generate the Gerber files?](https://support.jlcpcb.com/article/22-how-to-generate-the-gerber-files)</br>[Suggested Naming Patterns](https://support.jlcpcb.com/article/29-suggested-naming-patterns)
+
 # License
 
 MIT
