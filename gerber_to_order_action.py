@@ -83,7 +83,7 @@ pcbServices = [
             pcbnew.B_SilkS:   '[boardProjectName].GBO',
             pcbnew.F_Mask:    '[boardProjectName].GTS',
             pcbnew.B_Mask:    '[boardProjectName].GBS',
-            pcbnew.Edge_Cuts: '[boardProjectName].GML/GKO',
+            pcbnew.Edge_Cuts: '[boardProjectName].GML',
         },
         "drillExtensionRenameTo": 'TXT',
     },
