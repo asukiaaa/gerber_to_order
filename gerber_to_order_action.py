@@ -187,10 +187,11 @@ def plotLayers(
         for i in range(targetLayerCount):
             plotFilePath = plotFiles[i]
             layerId = layers[i][0]
-            newFileName = layerRenameRules[layerId]
-            newFileName = newFileName.replace('[boardProjectName]', boardProjectName)
-            newFilePath = '%s/%s' % (gerberDirPath, newFileName)
-            renameFile(plotFilePath, newFilePath)
+            if layerId in layers:
+                newFileName = layerRenameRules[layerId]
+                newFileName = newFileName.replace('[boardProjectName]', boardProjectName)
+                newFilePath = '%s/%s' % (gerberDirPath, newFileName)
+                renameFile(plotFilePath, newFilePath)
 
 
 def plotDrill(
