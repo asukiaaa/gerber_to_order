@@ -27,6 +27,16 @@ layers = [
 
 pcbServices = [
     {
+        "name": "Default",
+        "useAuxOrigin": False,
+        "gerberProtelExtensions": False,
+        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
+        "drillMergeNpth": False,
+        "drillMinimalHeader": False,
+        "layerRenameRules": {},
+        "drillExtensionRenameTo": None,
+    },
+    {
         # https://www.elecrow.com/pcb-manufacturing.html
         "name": "Elecrow",
         "useAuxOrigin": True,
