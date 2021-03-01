@@ -7,6 +7,7 @@ import wx
 import locale
 import zipfile
 # import datetime
+from .outline_measure import createSizeLabelOfBoard
 
 outputDirName = "gerber_to_order"
 retryCount = 10
@@ -243,7 +244,8 @@ def createZip(
         layerRenameRules,
         drillMergeNpth,
         drillExtensionRenameTo,
-        drillMinimalHeader
+        drillMinimalHeader,
+        sizeLabel,
 ):
     board = pcbnew.GetBoard()
     boardFileName = board.GetFileName()
@@ -251,15 +253,23 @@ def createZip(
     boardProjectName = (os.path.splitext(os.path.basename(boardFileName)))[0]
 
     outputDirPath = '%s/%s' % (boardDirPath, outputDirName)
-    gerberDirName = '%s_for_%s' % (boardProjectName, pcbServiceName)
+    gerberDirNameWildCard = '%s' % boardProjectName
+    gerberDirName = '%s' % boardProjectName
+    if sizeLabel is not None:
+        gerberDirName += '_' + sizeLabel
+    gerberDirNameWildCard += '*'
+    gerberDirName += '_for_' + pcbServiceName
+    gerberDirNameWildCard += '_for_' + pcbServiceName
     gerberDirPath = '%s/%s' % (outputDirPath, gerberDirName)
+    gerberDirPathWildCard = '%s/%s' % (outputDirPath, gerberDirNameWildCard)
     # timeStamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     # zipFilePath = '%s/%s_%s.zip' % (outputDirPath, timeStamp, gerberDirName)
     zipFilePath = '%s/%s.zip' % (outputDirPath, gerberDirName)
+    zipFilePathWildCard = '%s/%s.zip' % (outputDirPath, gerberDirNameWildCard)
 
     if not os.path.exists(outputDirPath):
         makeDir(outputDirPath)
-    removeDirIfExists(gerberDirPath)
+    removeDirIfExists(gerberDirPathWildCard)
     makeDir(gerberDirPath)
 
     plotLayers(
@@ -282,7 +292,7 @@ def createZip(
         drillExtensionRenameTo = drillExtensionRenameTo,
     )
 
-    removeFileIfExists(zipFilePath)
+    removeFileIfExists(zipFilePathWildCard)
     shutil.make_archive(os.path.splitext(zipFilePath)[0], 'zip', outputDirPath, gerberDirName)
 
     return zipFilePath
@@ -319,6 +329,7 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
             def OnExec(self,e):
                 try:
                     zipFiles = []
+                    sizeLabel = createSizeLabelOfBoard(pcbnew.GetBoard())
                     for pcbService in pcbServices:
                         path = createZip(
                             pcbServiceName = pcbService['name'],
@@ -329,6 +340,7 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                             drillMinimalHeader = pcbService['drillMinimalHeader'],
                             layerRenameRules = pcbService['layerRenameRules'],
                             drillExtensionRenameTo = pcbService['drillExtensionRenameTo'],
+                            sizeLabel = sizeLabel,
                         )
                         zipFiles.append(path)
                     message = ''
