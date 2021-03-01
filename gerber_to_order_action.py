@@ -1,5 +1,6 @@
 import pcbnew
 import os
+import glob
 import time
 import shutil
 import wx
@@ -122,12 +123,13 @@ pcbServices = [
 ]
 
 
-def removeFileIfExists(fileName, retryRemainingCount = retryCount):
-    if os.path.exists(fileName):
-        os.remove(fileName)
-        while (os.path.exists(fileName) and retryRemainingCount > 0):
-            time.sleep(retryWaitSecond)
-            retryRemainingCount -= 1
+def removeFileIfExists(fileNameWildCard, retryRemainingCount = retryCount):
+    for fileName in glob.glob(fileNameWildCard):
+        if os.path.exists(fileName):
+            os.remove(fileName)
+            while (os.path.exists(fileName) and retryRemainingCount > 0):
+                time.sleep(retryWaitSecond)
+                retryRemainingCount -= 1
 
 
 def renameFileIfExists(src, dst):
@@ -147,12 +149,13 @@ def renameFile(src, dst, retryRemainingCount = retryCount):
             raise Exception('Cannot rename %s to %s' % (src, dst))
 
 
-def removeDirIfExists(dirPath, retryRemainingCount = retryCount):
-    if os.path.exists(dirPath):
-        shutil.rmtree(dirPath)
-        while (os.path.exists(dirPath) and retryRemainingCount > 0):
-            time.sleep(retryWaitSecond)
-            retryRemainingCount -= 1
+def removeDirIfExists(dirPathWildCard, retryRemainingCount = retryCount):
+    for dirPath in glob.glob(dirPathWildCard):
+        if os.path.exists(dirPath):
+            shutil.rmtree(dirPath)
+            while (os.path.exists(dirPath) and retryRemainingCount > 0):
+                time.sleep(retryWaitSecond)
+                retryRemainingCount -= 1
 
 
 def makeDir(dirPath, retryRemainingCount = retryCount):
