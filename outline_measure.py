@@ -61,7 +61,7 @@ def getArcMinMaxPoints(draw):
     return points
 
 
-def createSizeLabelOfBoard(board):
+def getWidthHeightMmOfBoard(board):
     pointMinMax = MinMax2DimHolder()
 
     for draw in board.GetDrawings():
@@ -82,4 +82,9 @@ def createSizeLabelOfBoard(board):
 
     if pointMinMax.x.isMinOrMaxNone() or pointMinMax.y.isMinOrMaxNone():
         return None
-    return pointMinMax.x.getDistanceStr() + 'x' + pointMinMax.y.getDistanceStr() + 'mm'
+    return (pointMinMax.x.getDistanceMm(), pointMinMax.y.getDistanceMm())
+
+
+def createSizeLabelOfBoard(board):
+    wh = getWidthHeightMmOfBoard(board)
+    return None if wh is None else str(wh[0]) + 'x' + str(wh[1]) + 'mm'
