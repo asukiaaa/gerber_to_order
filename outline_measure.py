@@ -8,11 +8,11 @@ class MinMax1DimHolder:
         self.max = v if self.max is None else max(v, self.max)
         self.min = v if self.min is None else min(v, self.min)
 
-    def getDistance(self):
+    def getDistanceNm(self):
         return self.max - self.min
 
     def getDistanceMm(self):
-        return self.getDistance() / 1000000
+        return self.getDistanceNm() / 1000000
 
     def getDistanceStr(self):
         return str(self.getDistanceMm()) #.replace('.', 'p')
@@ -61,28 +61,43 @@ def getArcMinMaxPoints(draw):
     return points
 
 
-def getWidthHeightMmOfBoard(board):
-    pointMinMax = MinMax2DimHolder()
+def getMinMax2DimOfBoard(board):
+    minMax2Dim = MinMax2DimHolder()
 
     for draw in board.GetDrawings():
         if draw.GetLayerName() == 'Edge.Cuts':
             if draw.GetShapeStr() == 'Arc':
                 for point in getArcMinMaxPoints(draw):
-                    pointMinMax.updateMinMax(point)
+                    minMax2Dim.updateMinMax(point)
             elif draw.GetShapeStr() == 'circle':
                 r = draw.GetRadius()
                 center = draw.GetCenter()
                 x = center[0]
                 y = center[1]
-                pointMinMax.updateMinMax(pcbnew.wxPoint(x + r, y + r))
-                pointMinMax.updateMinMax(pcbnew.wxPoint(x - r, y - r))
+                minMax2Dim.updateMinMax(pcbnew.wxPoint(x + r, y + r))
+                minMax2Dim.updateMinMax(pcbnew.wxPoint(x - r, y - r))
             else:
-                pointMinMax.updateMinMax(draw.GetStart())
-                pointMinMax.updateMinMax(draw.GetEnd())
+                minMax2Dim.updateMinMax(draw.GetStart())
+                minMax2Dim.updateMinMax(draw.GetEnd())
 
-    if pointMinMax.x.isMinOrMaxNone() or pointMinMax.y.isMinOrMaxNone():
+    return minMax2Dim
+    if minMax2Dim.x.isMinOrMaxNone() or minMax2Dim.y.isMinOrMaxNone():
         return None
-    return (pointMinMax.x.getDistanceMm(), pointMinMax.y.getDistanceMm())
+    return (minMax2Dim.x.getDistanceMm(), minMax2Dim.y.getDistanceMm())
+
+
+def getWidthHeightNmOfBoard(board):
+    minMax2Dim = getMinMax2DimOfBoard(board)
+    if minMax2Dim.x.isMinOrMaxNone() or minMax2Dim.y.isMinOrMaxNone():
+        return None
+    return (minMax2Dim.x.getDistanceNm(), minMax2Dim.y.getDistanceNm())
+
+
+def getWidthHeightMmOfBoard(board):
+    minMax2Dim = getMinMax2DimOfBoard(board)
+    if minMax2Dim.x.isMinOrMaxNone() or minMax2Dim.y.isMinOrMaxNone():
+        return None
+    return (minMax2Dim.x.getDistanceMm(), minMax2Dim.y.getDistanceMm())
 
 
 def createSizeLabelOfBoard(board):
