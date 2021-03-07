@@ -1,5 +1,6 @@
 import pcbnew
 import os
+import traceback
 import glob
 import time
 import shutil
@@ -352,7 +353,7 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
                         message = 'Select some service to export.'
                     wx.MessageBox(message, 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 except Exception as e:
-                    wx.MessageBox('Error: ' + str(e), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
+                    wx.MessageBox('Error: ' + str(e) + '\n\n' + traceback.format_exc(), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
                 e.Skip()
         dialog = Dialog(None)
         dialog.Center()
