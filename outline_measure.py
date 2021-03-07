@@ -1,8 +1,9 @@
 import pcbnew
 
 class MinMax1DimHolder:
-    min = None
-    max = None
+    def __init__(self):
+        self.min = None
+        self.max = None
 
     def updateMinMax(self, v):
         self.max = v if self.max is None else max(v, self.max)
@@ -22,8 +23,9 @@ class MinMax1DimHolder:
 
 
 class MinMax2DimHolder:
-    x = MinMax1DimHolder()
-    y = MinMax1DimHolder()
+    def __init__(self):
+        self.x = MinMax1DimHolder()
+        self.y = MinMax1DimHolder()
 
     def updateMinMax(self, point):
         self.x.updateMinMax(point[0])
