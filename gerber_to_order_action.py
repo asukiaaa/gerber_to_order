@@ -11,7 +11,7 @@ import zipfile
 from .outline_measure import createSizeLabelOfBoard
 
 pluginName = 'Gerber to order'
-outputDirName = "gerber_to_order"
+outputDirName = 'gerber_to_order'
 retryCount = 10
 retryWaitSecond = 0.1
 
@@ -31,24 +31,24 @@ layers = [
 
 pcbServices = [
     {
-        "name": "Default",
-        "useAuxOrigin": False,
-        "gerberProtelExtensions": False,
-        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
-        "drillMergeNpth": False,
-        "drillMinimalHeader": False,
-        "layerRenameRules": {},
-        "drillExtensionRenameTo": None,
+        'name': 'Default',
+        'useAuxOrigin': False,
+        'gerberProtelExtensions': False,
+        'excellonFormat': pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
+        'drillMergeNpth': False,
+        'drillMinimalHeader': False,
+        'layerRenameRules': {},
+        'drillExtensionRenameTo': None,
     },
     {
         # https://www.elecrow.com/pcb-manufacturing.html
-        "name": "Elecrow",
-        "useAuxOrigin": True,
-        "gerberProtelExtensions": False,
-        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
-        "drillMergeNpth": False,
-        "drillMinimalHeader": False,
-        "layerRenameRules": {
+        'name': 'Elecrow',
+        'useAuxOrigin': True,
+        'gerberProtelExtensions': False,
+        'excellonFormat': pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
+        'drillMergeNpth': False,
+        'drillMinimalHeader': False,
+        'layerRenameRules': {
             pcbnew.F_Cu:      '[boardProjectName].GTL',
             pcbnew.B_Cu:      '[boardProjectName].GBL',
             pcbnew.F_SilkS:   '[boardProjectName].GTO',
@@ -61,18 +61,18 @@ pcbServices = [
             pcbnew.In3_Cu:    '[boardProjectName].G3',
             pcbnew.In4_Cu:    '[boardProjectName].G4',
         },
-        "drillExtensionRenameTo": 'TXT',
+        'drillExtensionRenameTo': 'TXT',
     },
     {
         # https://wiki.seeedstudio.com/Service_for_Fusion_PCB/
         # http://support.seeedstudio.com/knowledgebase/articles/1824574-how-to-generate-gerber-and-drill-files-from-kicad
-        "name": "FusionPCB",
-        "useAuxOrigin": True,
-        "gerberProtelExtensions": True,
-        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
-        "drillMergeNpth": True,
-        "drillMinimalHeader": False,
-        "layerRenameRules": {
+        'name': 'FusionPCB',
+        'useAuxOrigin': True,
+        'gerberProtelExtensions': True,
+        'excellonFormat': pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
+        'drillMergeNpth': True,
+        'drillMinimalHeader': False,
+        'layerRenameRules': {
             pcbnew.F_Cu:      '[boardProjectName].GTL',
             pcbnew.B_Cu:      '[boardProjectName].GBL',
             pcbnew.F_SilkS:   '[boardProjectName].GTO',
@@ -80,17 +80,17 @@ pcbServices = [
             pcbnew.F_Mask:    '[boardProjectName].GTS',
             pcbnew.B_Mask:    '[boardProjectName].GBS',
         },
-        "drillExtensionRenameTo": 'TXT',
+        'drillExtensionRenameTo': 'TXT',
     },
     {
         # https://www.pcbway.com/blog/help_center/Generate_Gerber_file_from_Kicad.html
-        "name": "PCBWay",
-        "useAuxOrigin": True,
-        "gerberProtelExtensions": False,
-        "excellonFormat": pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING,
-        "drillMergeNpth": False,
-        "drillMinimalHeader": True,
-        "layerRenameRules": {
+        'name': 'PCBWay',
+        'useAuxOrigin': True,
+        'gerberProtelExtensions': False,
+        'excellonFormat': pcbnew.EXCELLON_WRITER.SUPPRESS_LEADING,
+        'drillMergeNpth': False,
+        'drillMinimalHeader': True,
+        'layerRenameRules': {
             pcbnew.F_Cu:      '[boardProjectName].GTL',
             pcbnew.B_Cu:      '[boardProjectName].GBL',
             pcbnew.F_SilkS:   '[boardProjectName].GTO',
@@ -99,18 +99,18 @@ pcbServices = [
             pcbnew.B_Mask:    '[boardProjectName].GBS',
             pcbnew.Edge_Cuts: '[boardProjectName].GML',
         },
-        "drillExtensionRenameTo": 'TXT',
+        'drillExtensionRenameTo': 'TXT',
     },
     {
         # https://support.jlcpcb.com/article/22-how-to-generate-the-gerber-files
         # https://support.jlcpcb.com/article/29-suggested-naming-patterns
-        "name": "JLCPCB",
-        "useAuxOrigin": False,
-        "gerberProtelExtensions": True,
-        "excellonFormat": pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
-        "drillMergeNpth": True,
-        "drillMinimalHeader": False,
-        "layerRenameRules": {
+        'name': 'JLCPCB',
+        'useAuxOrigin': False,
+        'gerberProtelExtensions': True,
+        'excellonFormat': pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
+        'drillMergeNpth': True,
+        'drillMinimalHeader': False,
+        'layerRenameRules': {
             pcbnew.F_Cu:      '[boardProjectName].GTL',
             pcbnew.B_Cu:      '[boardProjectName].GBL',
             pcbnew.F_SilkS:   '[boardProjectName].GTO',
@@ -121,7 +121,7 @@ pcbServices = [
             pcbnew.In1_Cu:    '[boardProjectName].G2L',
             pcbnew.In2_Cu:    '[boardProjectName].G3L',
         },
-        "drillExtensionRenameTo": 'XLN',
+        'drillExtensionRenameTo': 'XLN',
     },
 ]
 
@@ -304,7 +304,7 @@ class Dialog(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, id=-1, title=pluginName)
         panel = wx.Panel(self)
-        description = wx.StaticText(panel, label="Export gerber and zip files.")
+        description = wx.StaticText(panel, label='Export gerber and zip files.')
         execbtn = wx.Button(panel, label='Export')
         clsbtn = wx.Button(panel, label='Close')
         clsbtn.Bind(wx.EVT_BUTTON, self.OnClose)
@@ -354,8 +354,8 @@ class Dialog(wx.Dialog):
 class GerberToOrderAction(pcbnew.ActionPlugin):
     def defaults(self):
         self.name = pluginName
-        self.category = "A descriptive category name"
-        self.description = "A plugin to creage zip compressed gerber files to order PCB for Elecrow, FusionPCB, PCBWay or JLCPCB."
+        self.category = 'A descriptive category name'
+        self.description = 'A plugin to creage zip compressed gerber files to order PCB for Elecrow, FusionPCB, PCBWay or JLCPCB.'
         self.show_toolbar_button = False
         self.icon_file_name = os.path.join(os.path.dirname(__file__), 'gerber_to_order.png')
 
