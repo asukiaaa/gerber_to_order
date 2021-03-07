@@ -10,6 +10,7 @@ import zipfile
 # import datetime
 from .outline_measure import createSizeLabelOfBoard
 
+pluginName = 'Gerber to order'
 outputDirName = "gerber_to_order"
 retryCount = 10
 retryWaitSecond = 0.1
@@ -301,7 +302,7 @@ def createZip(
 
 class Dialog(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, id=-1, title='Gerber to order')
+        wx.Dialog.__init__(self, parent, id=-1, title=pluginName)
         panel = wx.Panel(self)
         description = wx.StaticText(panel, label="Export gerber and zip files.")
         execbtn = wx.Button(panel, label='Export')
@@ -344,15 +345,15 @@ class Dialog(wx.Dialog):
                 message += '\nat\n' + os.path.dirname(zipFiles[0])
             else:
                 message = 'Select some service to export.'
-            wx.MessageBox(message, 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
+            wx.MessageBox(message, pluginName, wx.OK|wx.ICON_INFORMATION)
         except Exception as e:
-            wx.MessageBox('Error: ' + str(e) + '\n\n' + traceback.format_exc(), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
+            wx.MessageBox('Error: ' + str(e) + '\n\n' + traceback.format_exc(), pluginName, wx.OK|wx.ICON_INFORMATION)
         e.Skip()
 
 
 class GerberToOrderAction(pcbnew.ActionPlugin):
     def defaults(self):
-        self.name = "Gerber to order"
+        self.name = pluginName
         self.category = "A descriptive category name"
         self.description = "A plugin to creage zip compressed gerber files to order PCB for Elecrow, FusionPCB, PCBWay or JLCPCB."
         self.show_toolbar_button = False
