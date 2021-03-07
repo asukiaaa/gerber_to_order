@@ -299,6 +299,57 @@ def createZip(
     return zipFilePath
 
 
+class Dialog(wx.Dialog):
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent, id=-1, title='Gerber to order')
+        panel = wx.Panel(self)
+        description = wx.StaticText(panel, label="Export gerber and zip files.")
+        execbtn = wx.Button(panel, label='Export')
+        clsbtn = wx.Button(panel, label='Close')
+        clsbtn.Bind(wx.EVT_BUTTON, self.OnClose)
+        execbtn.Bind(wx.EVT_BUTTON, self.OnExec)
+        buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
+        buttonSizer.Add(execbtn)
+        buttonSizer.Add(clsbtn)
+        layout = wx.BoxSizer(wx.VERTICAL)
+        layout.Add(description, flag=wx.EXPAND|wx.BOTTOM|wx.TOP|wx.LEFT, border=5)
+        layout.Add(buttonSizer, flag=wx.EXPAND|wx.LEFT, border=5)
+        panel.SetSizer(layout)
+
+    def OnClose(self,e):
+        e.Skip()
+        self.Close()
+
+    def OnExec(self,e):
+        try:
+            zipFiles = []
+            sizeLabel = createSizeLabelOfBoard(pcbnew.GetBoard())
+            for pcbService in pcbServices:
+                path = createZip(
+                    pcbServiceName = pcbService['name'],
+                    useAuxOrigin = pcbService['useAuxOrigin'],
+                    gerberProtelExtensions = pcbService['gerberProtelExtensions'],
+                    excellonFormat = pcbService['excellonFormat'],
+                    drillMergeNpth = pcbService['drillMergeNpth'],
+                    drillMinimalHeader = pcbService['drillMinimalHeader'],
+                    layerRenameRules = pcbService['layerRenameRules'],
+                    drillExtensionRenameTo = pcbService['drillExtensionRenameTo'],
+                    sizeLabel = sizeLabel,
+                )
+                zipFiles.append(path)
+            message = ''
+            if len(zipFiles) > 0:
+                message = 'Exported\n'
+                message += '\n'.join(map(lambda path: os.path.basename(path), zipFiles))
+                message += '\nat\n' + os.path.dirname(zipFiles[0])
+            else:
+                message = 'Select some service to export.'
+            wx.MessageBox(message, 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
+        except Exception as e:
+            wx.MessageBox('Error: ' + str(e) + '\n\n' + traceback.format_exc(), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
+        e.Skip()
+
+
 class GerberToOrderAction(pcbnew.ActionPlugin):
     def defaults(self):
         self.name = "Gerber to order"
@@ -308,53 +359,6 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
         self.icon_file_name = os.path.join(os.path.dirname(__file__), 'gerber_to_order.png')
 
     def Run(self):
-        class Dialog(wx.Dialog):
-            def __init__(self, parent):
-                wx.Dialog.__init__(self, parent, id=-1, title='Gerber to order')
-                panel = wx.Panel(self)
-                description = wx.StaticText(panel, label="Export gerber and zip files.")
-                execbtn = wx.Button(panel, label='Export')
-                clsbtn = wx.Button(panel, label='Close')
-                clsbtn.Bind(wx.EVT_BUTTON, self.OnClose)
-                execbtn.Bind(wx.EVT_BUTTON, self.OnExec)
-                buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
-                buttonSizer.Add(execbtn)
-                buttonSizer.Add(clsbtn)
-                layout = wx.BoxSizer(wx.VERTICAL)
-                layout.Add(description, flag=wx.EXPAND|wx.BOTTOM|wx.TOP|wx.LEFT, border=5)
-                layout.Add(buttonSizer, flag=wx.EXPAND|wx.LEFT, border=5)
-                panel.SetSizer(layout)
-            def OnClose(self,e):
-                e.Skip()
-                self.Close()
-            def OnExec(self,e):
-                try:
-                    zipFiles = []
-                    sizeLabel = createSizeLabelOfBoard(pcbnew.GetBoard())
-                    for pcbService in pcbServices:
-                        path = createZip(
-                            pcbServiceName = pcbService['name'],
-                            useAuxOrigin = pcbService['useAuxOrigin'],
-                            gerberProtelExtensions = pcbService['gerberProtelExtensions'],
-                            excellonFormat = pcbService['excellonFormat'],
-                            drillMergeNpth = pcbService['drillMergeNpth'],
-                            drillMinimalHeader = pcbService['drillMinimalHeader'],
-                            layerRenameRules = pcbService['layerRenameRules'],
-                            drillExtensionRenameTo = pcbService['drillExtensionRenameTo'],
-                            sizeLabel = sizeLabel,
-                        )
-                        zipFiles.append(path)
-                    message = ''
-                    if len(zipFiles) > 0:
-                        message = 'Exported\n'
-                        message += '\n'.join(map(lambda path: os.path.basename(path), zipFiles))
-                        message += '\nat\n' + os.path.dirname(zipFiles[0])
-                    else:
-                        message = 'Select some service to export.'
-                    wx.MessageBox(message, 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
-                except Exception as e:
-                    wx.MessageBox('Error: ' + str(e) + '\n\n' + traceback.format_exc(), 'Gerber to order', wx.OK|wx.ICON_INFORMATION)
-                e.Skip()
         dialog = Dialog(None)
         dialog.Center()
         dialog.ShowModal()
