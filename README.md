@@ -2,6 +2,8 @@
 
 A KiCad plugin to create zip compressed gerber files to order for Elecrow, FusionPCB, PCBWay or JLCPCB.
 
+![gerber_to_order](./docs/result.png)
+
 # Usage
 
 ## Setup
