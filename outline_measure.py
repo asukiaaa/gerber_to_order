@@ -1,4 +1,4 @@
-import pcbnew
+from pcbnew import *
 
 class MinMax1DimHolder:
     def __init__(self):
@@ -67,20 +67,22 @@ def getMinMax2DimOfBoard(board):
     minMax2Dim = MinMax2DimHolder()
 
     for draw in board.GetDrawings():
-        if draw.GetLayerName() == 'Edge.Cuts':
-            if draw.GetShapeStr() == 'Arc':
-                for point in getArcMinMaxPoints(draw):
-                    minMax2Dim.updateMinMax(point)
-            elif draw.GetShapeStr() == 'circle':
-                r = draw.GetRadius()
-                center = draw.GetCenter()
-                x = center[0]
-                y = center[1]
-                minMax2Dim.updateMinMax(pcbnew.wxPoint(x + r, y + r))
-                minMax2Dim.updateMinMax(pcbnew.wxPoint(x - r, y - r))
-            else:
-                minMax2Dim.updateMinMax(draw.GetStart())
-                minMax2Dim.updateMinMax(draw.GetEnd())
+        if type(draw) is DRAWSEGMENT:
+            if draw.GetLayerName() == 'Edge.Cuts':
+                print(draw.GetShapeStr().encode('utf_8'));
+                if draw.GetShapeStr() == 'Arc':
+                    for point in getArcMinMaxPoints(draw):
+                        minMax2Dim.updateMinMax(point)
+                elif draw.GetShapeStr() == 'circle':
+                    r = draw.GetRadius()
+                    center = draw.GetCenter()
+                    x = center[0]
+                    y = center[1]
+                    minMax2Dim.updateMinMax(pcbnew.wxPoint(x + r, y + r))
+                    minMax2Dim.updateMinMax(pcbnew.wxPoint(x - r, y - r))
+                else:
+                    minMax2Dim.updateMinMax(draw.GetStart())
+                    minMax2Dim.updateMinMax(draw.GetEnd())
 
     return minMax2Dim
     if minMax2Dim.x.isMinOrMaxNone() or minMax2Dim.y.isMinOrMaxNone():
