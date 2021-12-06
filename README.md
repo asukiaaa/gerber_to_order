@@ -4,9 +4,9 @@ A KiCad plugin to create zip compressed gerber files to order for Elecrow, Fusio
 
 ![gerber_to_order](./docs/result.png)
 
-# Usage
+## Usage
 
-## Setup
+### Setup
 
 Put this project to a directory for plugin.
 
@@ -32,7 +32,7 @@ cd ~/.kicad/scripting/plugins
 git clone https://github.com/asukiaaa/gerber_to_order.git
 ```
 
-## Run
+### Run
 
 Then start pcbnew of KiCad and select Tools -> External plugins -> Gerber to Order.
 
@@ -45,11 +45,11 @@ PCBWay | [Generate Gerber from KiCad 5.1.6](https://www.pcbway.com/blog/help_cen
 FusionPCB | [Service for Fusion PCB](https://wiki.seeedstudio.com/Service_for_Fusion_PCB)
 JLCPCB | [How to generate the Gerber files?](https://support.jlcpcb.com/article/22-how-to-generate-the-gerber-files)</br>[Suggested Naming Patterns](https://support.jlcpcb.com/article/29-suggested-naming-patterns)
 
-# License
+## License
 
 MIT
 
-# References
+## References
 
 - [Python Plugin Development for Pcbnew](https://kicad.readthedocs.io/en/latest/Documentation/development/pcbnew-plugins/)
 - [KiCad Pcbnew Python Scripting: pcbnew Namespace Reference](https://docs.kicad.org/doxygen-python/namespacepcbnew.html)
