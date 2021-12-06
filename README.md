@@ -36,6 +36,29 @@ git clone https://github.com/asukiaaa/gerber_to_order.git
 
 Then start pcbnew of KiCad and select Tools -> External plugins -> Gerber to Order.
 
+### Update
+
+Put this project to a directory for plugin.
+
+For Windows.
+```
+cd ~/AppData/Roaming/kicad/scripting/plugins/gerber_to_order
+git pull origin master
+```
+
+For Mac.
+```
+cd ~/Library/Preferences/kicad/scripting/plugins/gerber_to_order
+git pull origin master
+```
+
+
+For Linux.
+```
+cd ~/.kicad/scripting/plugins/gerber_to_order
+git pull origin master
+```
+
 ## Supported manufacturers
 
 Name | Information url
