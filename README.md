@@ -57,3 +57,4 @@ MIT
 - [kicad-action-plugins/action_menu_gerber_zip.py](https://github.com/g200kg/kicad-action-plugins/blob/master/action_menu_gerber_zip.py)
 - [PCB製造サービス向けのガーバーデータとzipを作るKiCadのプラグインを作ってみた](https://asukiaaa.blogspot.com/2019/07/pcbzipkicad.html)
 - [KiCadの基板の大きさをpythonで測る](https://asukiaaa.blogspot.com/2021/02/kicadpython.html)
+- [KiCad 5.1 python_scripts_examples](https://gitlab.com/kicad/code/kicad/-/tree/5.1/demos/python_scripts_examples)
