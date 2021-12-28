@@ -68,10 +68,10 @@ def getMinMax2DimOfBoard(board):
 
     for draw in board.GetDrawings():
         if type(draw) is pcbnew.PCB_SHAPE and draw.GetLayerName() == 'Edge.Cuts':
-            if draw.GetShapeStr() == 'Arc':
+            if draw.GetShape() == pcbnew.S_ARC:
                 for point in getArcMinMaxPoints(draw):
                     minMax2Dim.updateMinMax(point)
-            elif draw.GetShapeStr() == 'circle':
+            elif draw.GetShape == pcbnew.S_CIRCLE:
                 r = draw.GetRadius()
                 center = draw.GetCenter()
                 x = center[0]
