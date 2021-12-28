@@ -184,7 +184,7 @@ def plotLayers(
     po.SetPlotValue(True)
     po.SetPlotReference(True)
     po.SetExcludeEdgeLayer(False)
-    po.SetLineWidth(pcbnew.FromMM(0.1))
+    po.SetSketchPadLineWidth(pcbnew.FromMM(0.1))
     po.SetSubtractMaskFromSilk(True)
     po.SetUseAuxOrigin(useAuxOrigin)
     po.SetUseGerberProtelExtensions(gerberProtelExtensions)
