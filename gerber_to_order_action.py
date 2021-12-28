@@ -224,7 +224,7 @@ def plotDrill(
     ew.SetFormat(True, excellonFormat, 3, 3)
     offset = pcbnew.wxPoint(0,0)
     if useAuxOrigin:
-        offset = board.GetAuxOrigin()
+        offset = board.GetDesignSettings().GetAuxOrigin()
     ew.SetOptions(False, drillMinimalHeader, offset, drillMergeNpth)
     ew.CreateDrillandMapFilesSet(gerberDirPath,True,False)
     if drillExtensionRenameTo is not None:
