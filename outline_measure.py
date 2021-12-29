@@ -45,13 +45,14 @@ def hasLineOnDegree(targetDegree, angleDegree, angleDegreeStart):
 
 
 def getArcMinMaxPoints(draw):
+    # https://docs.kicad.org/doxygen-python/classpcbnew_1_1EDA__SHAPE.html
     pointCenter = draw.GetCenter()
-    pointStart = draw.GetArcStart()
-    pointEnd = draw.GetArcEnd()
+    pointStart = draw.GetStart()
+    pointEnd = draw.GetEnd()
     points = [pointStart, pointEnd]
     radius = draw.GetRadius()
     angleDegreeStart = draw.GetArcAngleStart() / 10
-    angleDegree = draw.GetAngle() / 10
+    angleDegree = draw.GetArcAngle() / 10
     if hasLineOnDegree(0, angleDegree, angleDegreeStart):
        points.append(pcbnew.wxPoint(pointCenter[0]+radius, pointCenter[1]))
     if hasLineOnDegree(90, angleDegree, angleDegreeStart):
