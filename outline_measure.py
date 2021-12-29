@@ -47,12 +47,21 @@ def hasLineOnDegree(targetDegree, angleDegree, angleDegreeStart):
 def getArcMinMaxPoints(draw):
     # https://docs.kicad.org/doxygen-python/classpcbnew_1_1EDA__SHAPE.html
     pointCenter = draw.GetCenter()
-    pointStart = draw.GetStart()
-    pointEnd = draw.GetEnd()
+    if hasattr(draw, "GetArcStart"):
+       pointStart = draw.GetArcStart()
+    else:
+       pointStart = draw.GetStart()
+    if hasattr(draw, "GetArcEnd"):
+       pointEnd = draw.GetArcEnd()
+    else:
+       pointEnd = draw.GetEnd()
     points = [pointStart, pointEnd]
     radius = draw.GetRadius()
     angleDegreeStart = draw.GetArcAngleStart() / 10
-    angleDegree = draw.GetArcAngle() / 10
+    if hasattr(draw, "GetAngle"):
+       angleDegree = draw.GetAngle() / 10
+    else:
+       angleDegree = draw.GetArcAngle() / 10
     if hasLineOnDegree(0, angleDegree, angleDegreeStart):
        points.append(pcbnew.wxPoint(pointCenter[0]+radius, pointCenter[1]))
     if hasLineOnDegree(90, angleDegree, angleDegreeStart):
@@ -68,11 +77,11 @@ def getMinMax2DimOfBoard(board):
     minMax2Dim = MinMax2DimHolder()
 
     for draw in board.GetDrawings():
-        if type(draw) is pcbnew.PCB_SHAPE and draw.GetLayerName() == 'Edge.Cuts':
+        if draw.GetClass() in ["DRAWSEGMENT", "PCB_SHAPE"] and draw.GetLayerName() == 'Edge.Cuts':
             if draw.GetShape() == pcbnew.S_ARC:
                 for point in getArcMinMaxPoints(draw):
                     minMax2Dim.updateMinMax(point)
-            elif draw.GetShape == pcbnew.S_CIRCLE:
+            elif draw.GetShape() == pcbnew.S_CIRCLE:
                 r = draw.GetRadius()
                 center = draw.GetCenter()
                 x = center[0]
