@@ -184,7 +184,10 @@ def plotLayers(
     po.SetPlotValue(True)
     po.SetPlotReference(True)
     po.SetExcludeEdgeLayer(False)
-    po.SetLineWidth(pcbnew.FromMM(0.1))
+    if hasattr(po, "SetLineWidth"):
+        po.SetLineWidth(pcbnew.FromMM(0.1))
+    else:
+        po.SetSketchPadLineWidth(pcbnew.FromMM(0.1))
     po.SetSubtractMaskFromSilk(True)
     po.SetUseAuxOrigin(useAuxOrigin)
     po.SetUseGerberProtelExtensions(gerberProtelExtensions)
@@ -224,7 +227,10 @@ def plotDrill(
     ew.SetFormat(True, excellonFormat, 3, 3)
     offset = pcbnew.wxPoint(0,0)
     if useAuxOrigin:
-        offset = board.GetAuxOrigin()
+        if hasattr(board, "GetAuxOrigin"):
+            offset = board.GetAuxOrigin()
+        else:
+            offset = board.GetDesignSettings().GetAuxOrigin()
     ew.SetOptions(False, drillMinimalHeader, offset, drillMergeNpth)
     ew.CreateDrillandMapFilesSet(gerberDirPath,True,False)
     if drillExtensionRenameTo is not None:
