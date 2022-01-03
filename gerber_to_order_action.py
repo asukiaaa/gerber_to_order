@@ -206,7 +206,7 @@ def plotLayers(
         for i in range(targetLayerCount):
             plotFilePath = plotFiles[i]
             layerId = layers[i][0]
-            if layerId in layers:
+            if layerId in layerRenameRules:
                 newFileName = layerRenameRules[layerId]
                 newFileName = newFileName.replace('[boardProjectName]', boardProjectName)
                 newFilePath = '%s/%s' % (gerberDirPath, newFileName)
