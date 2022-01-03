@@ -103,12 +103,12 @@ pcbServices = [
     },
     {
         # https://support.jlcpcb.com/article/22-how-to-generate-the-gerber-files
-        # https://support.jlcpcb.com/article/29-suggested-naming-patterns
+        # https://support.jlcpcb.com/article/149-how-to-generate-gerber-and-drill-files-in-kicad
         'name': 'JLCPCB',
         'useAuxOrigin': False,
         'gerberProtelExtensions': True,
         'excellonFormat': pcbnew.EXCELLON_WRITER.DECIMAL_FORMAT,
-        'drillMergeNpth': True,
+        'drillMergeNpth': False,
         'drillMinimalHeader': False,
         'layerRenameRules': {
             pcbnew.F_Cu:      '[boardProjectName].GTL',
@@ -118,10 +118,10 @@ pcbServices = [
             pcbnew.F_Mask:    '[boardProjectName].GTS',
             pcbnew.B_Mask:    '[boardProjectName].GBS',
             pcbnew.Edge_Cuts: '[boardProjectName].GKO',
-            pcbnew.In1_Cu:    '[boardProjectName].G2L',
-            pcbnew.In2_Cu:    '[boardProjectName].G3L',
+            pcbnew.In1_Cu:    '[boardProjectName].GL2',
+            pcbnew.In2_Cu:    '[boardProjectName].GL3',
         },
-        'drillExtensionRenameTo': 'XLN',
+        'drillExtensionRenameTo': 'TXT',
     },
 ]
 
@@ -206,7 +206,7 @@ def plotLayers(
         for i in range(targetLayerCount):
             plotFilePath = plotFiles[i]
             layerId = layers[i][0]
-            if layerId in layers:
+            if layerId in layerRenameRules:
                 newFileName = layerRenameRules[layerId]
                 newFileName = newFileName.replace('[boardProjectName]', boardProjectName)
                 newFilePath = '%s/%s' % (gerberDirPath, newFileName)
