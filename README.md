@@ -10,14 +10,14 @@ A KiCad plugin to create zip compressed gerber files to order for Elecrow, Fusio
 
 Put this project to a directory for plugin.
 
-For Windows.
+For Windows. (It's for KiCad5. TODO: check and update for KiCad6)
 ```
 mkdir -p ~/AppData/Roaming/kicad/scripting/plugins
 cd ~/AppData/Roaming/kicad/scripting/plugins
 git clone https://github.com/asukiaaa/gerber_to_order.git
 ```
 
-For Mac.
+For Mac. (It's for KiCad5. TODO: check and update for KiCad6)
 ```
 mkdir -p ~/Library/Preferences/kicad/scripting/plugins
 cd ~/Library/Preferences/kicad/scripting/plugins
