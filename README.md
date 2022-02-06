@@ -34,7 +34,7 @@ git clone https://github.com/asukiaaa/gerber_to_order.git
 
 ### Run
 
-Then start pcbnew of KiCad and select Tools -> External plugins -> Gerber to Order.
+Then start PCB editor of KiCad and select Tools -> External plugins -> Gerber to Order.
 
 ### Update
 
