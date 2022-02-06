@@ -27,8 +27,8 @@ git clone https://github.com/asukiaaa/gerber_to_order.git
 
 For Linux.
 ```
-mkdir -p ~/.kicad/scripting/plugins
-cd ~/.kicad/scripting/plugins
+mkdir -p ~/.local/share/kicad/6.0/scripting/plugins
+cd ~/.local/share/kicad/6.0/scripting/plugins
 git clone https://github.com/asukiaaa/gerber_to_order.git
 ```
 
