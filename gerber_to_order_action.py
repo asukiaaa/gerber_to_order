@@ -183,14 +183,16 @@ def plotLayers(
     po.SetOutputDirectory(gerberDirPath)
     po.SetPlotValue(True)
     po.SetPlotReference(True)
-    po.SetExcludeEdgeLayer(False)
+    po.SetExcludeEdgeLayer(True)
     if hasattr(po, "SetLineWidth"):
         po.SetLineWidth(pcbnew.FromMM(0.1))
     else:
         po.SetSketchPadLineWidth(pcbnew.FromMM(0.1))
-    po.SetSubtractMaskFromSilk(True)
+    po.SetSubtractMaskFromSilk(False)
     po.SetUseAuxOrigin(useAuxOrigin)
     po.SetUseGerberProtelExtensions(gerberProtelExtensions)
+    po.SetDrillMarksType(pcbnew.PCB_PLOT_PARAMS.NO_DRILL_SHAPE)
+    po.SetSkipPlotNPTH_Pads(False)
 
     plotFiles = []
     for i in range(targetLayerCount):
