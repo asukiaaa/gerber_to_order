@@ -8,42 +8,14 @@ A KiCad plugin to create zip compressed gerber files to order for Elecrow, Fusio
 
 ### Setup
 
-Put this project to a directory for plugin.
+Install as an addon for KiCad.
 
-For Windows. (It's for KiCad5. TODO: check and update for KiCad6)
-```
-mkdir -p ~/AppData/Roaming/kicad/scripting/plugins
-cd ~/AppData/Roaming/kicad/scripting/plugins
-git clone https://github.com/asukiaaa/gerber_to_order.git
-```
-
-For Mac. (It's for KiCad5. TODO: check and update for KiCad6)
-```
-mkdir -p ~/Library/Preferences/kicad/scripting/plugins
-cd ~/Library/Preferences/kicad/scripting/plugins
-git clone https://github.com/asukiaaa/gerber_to_order.git
-```
-
-
-For Linux.
-```
-mkdir -p ~/.local/share/kicad/6.0/scripting/plugins
-cd ~/.local/share/kicad/6.0/scripting/plugins
-git clone https://github.com/asukiaaa/gerber_to_order.git
-```
+1. Tools -> Pulugin and Content Manager
+2. Search gerber_to_order on plugins tab and click install button
 
 ### Run
 
 Then start PCB editor of KiCad and select Tools -> External plugins -> Gerber to Order.
-
-### Update
-
-Move to directory of plugin and run pull command.
-
-```
-cd [directory of plugins]/gerber_to_order
-git pull origin master
-```
 
 ## Supported manufacturers
 
@@ -53,6 +25,41 @@ Elecrow | [Elecrow PCB Manufacturing](https://www.elecrow.com/pcb-manufacturing.
 PCBWay | [Generate Gerber from KiCad 5.1.6](https://www.pcbway.com/blog/help_center/Generate_Gerber_file_from_Kicad_5_1_6.html)
 FusionPCB | [Service for Fusion PCB](https://wiki.seeedstudio.com/Service_for_Fusion_PCB)
 JLCPCB | [How to generate the Gerber files?](https://support.jlcpcb.com/article/22-how-to-generate-the-gerber-files)</br>[Suggested Naming Patterns](https://support.jlcpcb.com/article/29-suggested-naming-patterns)
+
+
+## Development
+
+Clone this repository to someware.
+```
+mkdir ~/gitprojects
+cd ~/gitprojects
+git clone https://github.com/asukiaaa/gerber_to_order.git
+```
+
+Put plugin directory of this project to a directory for plugin.
+Symbolik link is OK.
+
+For Windows. (It's for KiCad5. TODO: Check and update for KiCad6 and 7.)
+```
+mkdir -p ~/AppData/Roaming/kicad/scripting/plugins
+cd ~/AppData/Roaming/kicad/scripting/plugins
+ln -s ~/gitprojects/gerber_to_order/plugins ~/AppData/Roaming/kicad/scripting/plugins/gerber_to_order
+```
+
+For Mac. (It's for KiCad5. TODO: Check and update for KiCad6 and 7.)
+```
+mkdir -p ~/Library/Preferences/kicad/scripting/plugins
+cd ~/Library/Preferences/kicad/scripting/plugins
+ln -s ~/gitprojects/gerber_to_order/plugins ~/AppData/Roaming/kicad/scripting/plugins/gerber_to_order
+```
+
+
+For Linux. (Maybe version name of 6.0 will change by versino of KiCad which you use.)
+```
+mkdir -p ~/.local/share/kicad/6.0/scripting/plugins
+cd ~/.local/share/kicad/6.0/scripting/plugins
+ln -s ~/gitprojects/gerber_to_order/plugins ~/AppData/Roaming/kicad/scripting/plugins/gerber_to_order
+```
 
 ## License
 
