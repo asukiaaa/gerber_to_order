@@ -17,13 +17,13 @@
     },
     "versions": [
         {
-            "version": "1.0",
+            "version": "1.0.0",
             "status": "stable",
             "kicad_version": "6.0",
-            "download_sha256": "YOUR_SHA256_HERE",
-            "download_size": 1234,
-            "download_url": "https://github.com/YOUR/DOWNLOAD/URL/kicad-beautiful-theme.zip",
-            "install_size": 5678
+            "download_sha256": "1d224e89e36322532f887c0befc91b3f301fcb92319b287fce808a050fbf3a03",
+            "download_size": 59887,
+            "download_url": "https://github.com/asukiaaa/gerber_to_order/archive/refs/tags/1.0.0.zip",
+            "install_size": 128000
         }
     ]
 }
