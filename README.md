@@ -61,6 +61,16 @@ cd ~/.local/share/kicad/6.0/scripting/plugins
 ln -s ~/gitprojects/gerber_to_order/plugins ~/AppData/Roaming/kicad/scripting/plugins/gerber_to_order
 ```
 
+## Release
+
+Create a zip file.
+
+```sh
+zip kicad-addon metadata.json resources plugins
+```
+
+Then upload kicad-addon.zip for releasing.
+
 ## License
 
 MIT
