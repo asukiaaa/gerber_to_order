@@ -3,7 +3,7 @@
     "name": "gerber to order",
     "description": "Create gerber files for some PCB order services.",
     "description_full": "Create zip files which includes gerber files for each PCB services.",
-    "identifier": "com.github.asukiaaa.gerber_to_order",
+    "identifier": "com.github.asukiaaa.gerber-to-order",
     "type": "plugin",
     "author": {
         "name": "Asuki Kono",
