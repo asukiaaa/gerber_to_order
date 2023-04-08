@@ -19,7 +19,11 @@
         {
             "version": "1.0.0",
             "status": "stable",
-            "kicad_version": "6.0"
+            "kicad_version": "6.0",
+            "download_size": 799,
+            "download_sha256": "66bc8d0835ab3a11bc40fa9834343061c5ad9411d12a942bc9898d9d89ade982",
+            "download_url": "https://github.com/asukiaaa/gerber_to_order/releases/download/1.0.0/kicad-addon.zip",
+            "install_size": 989
         }
     ]
 }
