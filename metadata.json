@@ -1,0 +1,29 @@
+{
+    "$schema": "https://go.kicad.org/pcm/schemas/v1",
+    "name": "gerber to order",
+    "description": "Create gerber files for some PCB order services.",
+    "description_full": "Create zip files which includes gerber files for each PCB services.",
+    "identifier": "com.github.asukiaaa.gerber_to_order",
+    "type": "plugin",
+    "author": {
+        "name": "Asuki Kono",
+        "contact": {
+            "web": "https://asukiaaa.blogspot.com"
+        }
+    },
+    "license": "MIT",
+    "resources": {
+        "homepage": "https://asukiaaa/gerber_to_order"
+    },
+    "versions": [
+        {
+            "version": "1.0",
+            "status": "stable",
+            "kicad_version": "6.0",
+            "download_sha256": "YOUR_SHA256_HERE",
+            "download_size": 1234,
+            "download_url": "https://github.com/YOUR/DOWNLOAD/URL/kicad-beautiful-theme.zip",
+            "install_size": 5678
+        }
+    ]
+}
