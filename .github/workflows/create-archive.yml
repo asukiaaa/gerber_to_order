@@ -20,10 +20,10 @@ jobs:
       - name: Put zip info to Release.txt
         run: |
           echo $(DOWNLOAD_SIZE=$(stat --printf="%s" kicad-addon.zip))
-          echo "download_size: ${{DOWNLOAD_SIZE}}" >> Release.txt
+          echo "download_size: ${{env.DOWNLOAD_SIZE}}" >> Release.txt
           echo "download_sha256: $(sha256sum kicad-addon.zip | cut -d ' ' -f 1)" >> Release.txt
           echo $([[ "$(zipinfo -t kicad-addon.zip)" =~ ^[0-9]+\ files,\ ([0-9]+)\ bytes.*$ ]])
-          echo "install_size: ${{BASH_REMATCH[1]}}" >> Release.txt
+          echo "install_size: ${{env.BASH_REMATCH[1]}}" >> Release.txt
         # echo "download_url: ${{}}" >> Release.txt
       - name: Upload assets
         uses: softprops/action-gh-release@v1
