@@ -28,7 +28,7 @@ jobs:
             {
               download_size: $(stat --printf="%s" kicad-addon.zip),
               download_sha256: $(sha256sum kicad-addon.zip),
-              install_size: ${{INATALL_SIZE}}
+              install_size: ${{env.INATALL_SIZE}}
             }
             ```
           files: kicad-addon.zip
