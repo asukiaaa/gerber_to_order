@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: Create Archive
+    name: Create Archive Job
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
