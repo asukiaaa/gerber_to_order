@@ -30,4 +30,4 @@ jobs:
               install_size: ${{INATALL_SIZE}}
             }
             ```
-          files: kicad-addon.zip
+        files: kicad-addon.zip
