@@ -18,7 +18,7 @@ jobs:
       - name: Create zip file
         run: zip kicad-addon metadata.json -r plugins -r resources
       - name: Upload assets
-        id: upoad-assets
+        id: upload-assets
         uses: softprops/action-gh-release@v1
         with:
           files: kicad-addon.zip
