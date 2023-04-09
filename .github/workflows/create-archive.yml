@@ -10,5 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Archive
-        run: zip kicad-addon metadata.json plugins resources
+      - name: Create zip file
+        run: zip ${{ steps.version.outputs.filename }}-kicad-addon metadata.json plugins resources
+      - name: Upload zip for release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ steps.version.outputs.filename }}-kicad-addon.zip
+          asset_name: ${{ steps.version.outputs.filename }}-kicad-addon.zip
+          asset_content_type: application/zip
