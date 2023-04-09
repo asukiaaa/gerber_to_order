@@ -9,5 +9,6 @@ jobs:
     name: Create Archive
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Archive
         run: zip kicad-addon metadata.json plugins resources
