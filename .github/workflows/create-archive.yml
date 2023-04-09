@@ -24,6 +24,7 @@ jobs:
           echo "download_sha256: $(sha256sum kicad-addon.zip)" > Release.txt
           [[ "$(zipinfo -t kicad-addons.zip)" =~ ^[0-9]+\ files,\ ([0-9]+)\ bytes.*$ ]]
           echo "install_size: ${BASH_REMATCH[1]}" > Release.txt
+        # echo "download_url: ${{}}" > Release.txt
       - name: Upload assets
         uses: softprops/action-gh-release@v1
         with:
