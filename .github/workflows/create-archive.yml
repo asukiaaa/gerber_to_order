@@ -22,7 +22,8 @@ jobs:
       - name: Upload assets
         uses: softprops/action-gh-release@v1
         with:
-          append_body: |
+          append_body: tue
+          body: |
             ```
             {
               download_size: $(stat --printf="%s" kicad-addon.zip),
@@ -30,4 +31,4 @@ jobs:
               install_size: ${{INATALL_SIZE}}
             }
             ```
-        files: kicad-addon.zip
+          files: kicad-addon.zip
