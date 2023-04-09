@@ -17,19 +17,23 @@ jobs:
       - uses: actions/checkout@v3
       - name: Create zip file
         run: zip kicad-addon metadata.json -r plugins -r resources
+      - name: Upload assets
+        id: upoad-assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: kicad-addon.zip
       - name: Put zip info to Release.txt
         run: |
           echo "\`\`\`json" >> Release.txt
           echo "{" >> Release.txt
           echo "  \"download_size\": $(stat --printf=%s kicad-addon.zip)," >> Release.txt
           echo "  \"download_sha256\": \"$(sha256sum kicad-addon.zip | cut -d ' ' -f 1)\"," >> Release.txt
+          echo "  \"download_url\": \"${{ fromJSON(steps.upload-assets.assets[0].browser_download_url) }}\"" >> Release.txt
           echo "  \"install_size\": $([[ "$(zipinfo -t kicad-addon.zip)" =~ ^[0-9]+\ files,\ ([0-9]+)\ bytes.*$ ]]; echo ${BASH_REMATCH[1]})" >> Release.txt
           echo "}" >> Release.txt
           echo "\`\`\`" >> Release.txt
-        # echo "download_url: ${{}}" >> Release.txt
-      - name: Upload assets
+      - name: Update body of release
         uses: softprops/action-gh-release@v1
         with:
           append_body: true
           body_path: Release.txt
-          files: kicad-addon.zip
