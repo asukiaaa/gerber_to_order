@@ -1,0 +1,13 @@
+# http://skawashima.com/blog/2019/12/github-actions-auto-release/
+# https://qiita.com/hotpepsi/items/756bf03812af66fdeb8c
+# https://github.com/marketplace/actions/zip-release
+# https://docs.github.com/ja/actions/using-workflows/workflow-syntax-for-github-actions
+name: Create Archive
+on: release
+jobs:
+  build:
+    name: Create Archive
+    runs-on: ubuntu-latest
+    steps:
+      - name: Archive
+        run: zip kicad-addon metadata.json plugins resources
