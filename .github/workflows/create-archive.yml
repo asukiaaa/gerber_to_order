@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Create zip file
-        run: zip kicad-addon metadata.json plugins resources
+        run: zip kicad-addon metadata.json -r plugins -r resources
       - name: Upload zip for release
         uses: softprops/action-gh-release@v1
         with:
