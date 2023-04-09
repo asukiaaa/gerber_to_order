@@ -3,7 +3,11 @@
 # https://github.com/marketplace/actions/zip-release
 # https://docs.github.com/ja/actions/using-workflows/workflow-syntax-for-github-actions
 name: Create Archive
-on: release
+
+on:
+  release:
+    types: [published]
+
 jobs:
   build:
     name: Create Archive
