@@ -17,13 +17,23 @@
     },
     "versions": [
         {
+            "version": "1.0.1",
+            "status": "stable",
+            "kicad_version": "6.0",
+            "download_size": 19851,
+            "download_sha256": "4a937d06316c02b710017d4c96d6905b824acdce993f6d7666cf9df862e91be1",
+            "download_url": "https://github.com/asukiaaa/gerber_to_order/releases/download/1.0.1/kicad-addon.zip",
+            "install_size": 33318
+        },
+        {
             "version": "1.0.0",
             "status": "stable",
             "kicad_version": "6.0",
-            "download_size": 799,
-            "download_sha256": "66bc8d0835ab3a11bc40fa9834343061c5ad9411d12a942bc9898d9d89ade982",
+            "kicad_version_max": "6.0",
+            "download_size": 19695,
+            "download_sha256": "fbe8eeb68cd4d4c204333c9e88dabc502ab969ec1ef6beab097fa9870796a872",
             "download_url": "https://github.com/asukiaaa/gerber_to_order/releases/download/1.0.0/kicad-addon.zip",
-            "install_size": 989
+            "install_size": 32808
         }
     ]
 }
