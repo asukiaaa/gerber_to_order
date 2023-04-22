@@ -57,9 +57,12 @@ def getArcMinMaxPoints(draw):
        pointEnd = draw.GetEnd()
     points = [pointStart, pointEnd]
     radius = draw.GetRadius()
-    angleDegreeStart = draw.GetArcAngleStart() / 10
+    thereIsEdaAngle = hasattr(pcbnew, "EDA_ANGLE")
+    angleDegreeStart = draw.GetArcAngleStart().AsDegrees() if thereIsEdaAngle else draw.GetArcAngleStart() / 10
     if hasattr(draw, "GetAngle"):
        angleDegree = draw.GetAngle() / 10
+    elif thereIsEdaAngle and isinstance(draw.GetArcAngle(), pcbnew.EDA_ANGLE):
+       angleDegree = draw.GetArcAngle().AsDegrees()
     else:
        angleDegree = draw.GetArcAngle() / 10
     if hasLineOnDegree(0, angleDegree, angleDegreeStart):
