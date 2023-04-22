@@ -9,11 +9,15 @@ import locale
 import zipfile
 # import datetime
 from .outline_measure import createSizeLabelOfBoard
+import re
 
 pluginName = 'Gerber to order'
 outputDirName = 'gerber_to_order'
 retryCount = 10
 retryWaitSecond = 0.1
+
+isKiCad_7_0 = re.match(r'^7\.0\..*', pcbnew.Version())
+isKiCad_7_0_orMore = isKiCad_7_0 is not None
 
 layers = [
     [ pcbnew.F_Cu,      'F_Cu' ],
@@ -183,7 +187,8 @@ def plotLayers(
     po.SetOutputDirectory(gerberDirPath)
     po.SetPlotValue(True)
     po.SetPlotReference(True)
-    po.SetExcludeEdgeLayer(True)
+    if hasattr(po, "SetExcludeEdgeLayer"):
+        po.SetExcludeEdgeLayer(True)
     if hasattr(po, "SetLineWidth"):
         po.SetLineWidth(pcbnew.FromMM(0.1))
     else:
@@ -191,7 +196,8 @@ def plotLayers(
     po.SetSubtractMaskFromSilk(False)
     po.SetUseAuxOrigin(useAuxOrigin)
     po.SetUseGerberProtelExtensions(gerberProtelExtensions)
-    po.SetDrillMarksType(pcbnew.PCB_PLOT_PARAMS.NO_DRILL_SHAPE)
+    if hasattr(pcbnew, "PCB_PLOT_PARAMS.NO_DRILL_SHAPE"):
+        po.SetDrillMarksType(pcbnew.PCB_PLOT_PARAMS.NO_DRILL_SHAPE)
     po.SetSkipPlotNPTH_Pads(False)
 
     plotFiles = []
@@ -227,7 +233,7 @@ def plotDrill(
 ):
     ew = pcbnew.EXCELLON_WRITER(board)
     ew.SetFormat(True, excellonFormat, 3, 3)
-    offset = pcbnew.wxPoint(0,0)
+    offset = pcbnew.VECTOR2I(0,0) if isKiCad_7_0_orMore else pcbnew.wxPoint(0,0)
     if useAuxOrigin:
         if hasattr(board, "GetAuxOrigin"):
             offset = board.GetAuxOrigin()
