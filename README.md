@@ -54,7 +54,7 @@ ln -s ~/gitprojects/gerber_to_order/plugins ~/AppData/Roaming/kicad/scripting/pl
 ```
 
 
-For Linux. (Maybe version name of 6.0 will change by versino of KiCad which you use.)
+For Linux. (Maybe version name of 6.0 will change by the version of KiCad which you use.)
 ```
 mkdir -p ~/.local/share/kicad/6.0/scripting/plugins
 cd ~/.local/share/kicad/6.0/scripting/plugins
