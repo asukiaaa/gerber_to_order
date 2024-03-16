@@ -16,8 +16,10 @@ outputDirName = 'gerber_to_order'
 retryCount = 10
 retryWaitSecond = 0.1
 
-isKiCad_7_0 = re.match(r'^7\.0\..*', pcbnew.Version())
-isKiCad_7_0_orMore = isKiCad_7_0 is not None
+versionRegrepResult = re.compile("^([0-9]*)\.([0-9]*)\..*").match(pcbnew.Version())
+versionMajor = int(versionRegrepResult.group(1))
+# versionMinor = int(versionRegrepResult.group(2))
+isKiCad_7_orMore = versionMajor >= 7
 
 layers = [
     [ pcbnew.F_Cu,      'F_Cu' ],
@@ -233,7 +235,7 @@ def plotDrill(
 ):
     ew = pcbnew.EXCELLON_WRITER(board)
     ew.SetFormat(True, excellonFormat, 3, 3)
-    offset = pcbnew.VECTOR2I(0,0) if isKiCad_7_0_orMore else pcbnew.wxPoint(0,0)
+    offset = pcbnew.VECTOR2I(0,0) if isKiCad_7_orMore else pcbnew.wxPoint(0,0)
     if useAuxOrigin:
         if hasattr(board, "GetAuxOrigin"):
             offset = board.GetAuxOrigin()
