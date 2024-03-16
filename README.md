@@ -43,14 +43,14 @@ For Windows. (It's for KiCad5. TODO: Check and update for KiCad6 and 7.)
 ```
 mkdir -p ~/AppData/Roaming/kicad/scripting/plugins
 cd ~/AppData/Roaming/kicad/scripting/plugins
-ln -s ~/gitprojects/gerber_to_order/plugins ~/AppData/Roaming/kicad/scripting/plugins/gerber_to_order
+ln -s ~/gitprojects/gerber_to_order/plugins ./gerber_to_order
 ```
 
 For Mac. (It's for KiCad5. TODO: Check and update for KiCad6 and 7.)
 ```
 mkdir -p ~/Library/Preferences/kicad/scripting/plugins
 cd ~/Library/Preferences/kicad/scripting/plugins
-ln -s ~/gitprojects/gerber_to_order/plugins ~/AppData/Roaming/kicad/scripting/plugins/gerber_to_order
+ln -s ~/gitprojects/gerber_to_order/plugins ./gerber_to_order
 ```
 
 
@@ -58,7 +58,7 @@ For Linux. (Maybe version name of 6.0 will change by the version of KiCad which 
 ```
 mkdir -p ~/.local/share/kicad/6.0/scripting/plugins
 cd ~/.local/share/kicad/6.0/scripting/plugins
-ln -s ~/gitprojects/gerber_to_order/plugins ~/AppData/Roaming/kicad/scripting/plugins/gerber_to_order
+ln -s ~/gitprojects/gerber_to_order/plugins ./gerber_to_order
 ```
 
 ## Release
