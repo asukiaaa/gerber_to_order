@@ -372,7 +372,7 @@ class GerberToOrderAction(pcbnew.ActionPlugin):
         self.name = pluginName
         self.category = 'A descriptive category name'
         self.description = 'A plugin to creage zip compressed gerber files to order PCB for Elecrow, FusionPCB, PCBWay or JLCPCB.'
-        self.show_toolbar_button = False
+        self.show_toolbar_button = True
         self.icon_file_name = os.path.join(os.path.dirname(__file__), 'gerber_to_order.png')
 
     def Run(self):
