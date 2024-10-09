@@ -24,7 +24,7 @@ Name | Information url
 Elecrow | [Elecrow PCB Manufacturing](https://www.elecrow.com/pcb-manufacturing.html)
 PCBWay | [Generate Gerber from KiCad 5.1.6](https://www.pcbway.com/blog/help_center/Generate_Gerber_file_from_Kicad_5_1_6.html)
 FusionPCB | [Service for Fusion PCB](https://wiki.seeedstudio.com/Service_for_Fusion_PCB)
-JLCPCB | [How to generate the Gerber files?](https://support.jlcpcb.com/article/22-how-to-generate-the-gerber-files)</br>[Suggested Naming Patterns](https://support.jlcpcb.com/article/29-suggested-naming-patterns)
+JLCPCB | [How to generate Gerber and Drill files in KiCAD 8?](https://jlcpcb.com/help/article/how-to-generate-gerber-and-drill-files-in-kicad-8)</br>[Suggested Naming Patterns](https://jlcpcb.com/help/article/suggested-naming-patterns)
 
 
 ## Development

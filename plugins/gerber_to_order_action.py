@@ -110,8 +110,8 @@ pcbServices = [
         'drillExtensionRenameTo': 'TXT',
     },
     {
-        # https://support.jlcpcb.com/article/22-how-to-generate-the-gerber-files
-        # https://support.jlcpcb.com/article/149-how-to-generate-gerber-and-drill-files-in-kicad
+        # https://jlcpcb.com/help/article/suggested-naming-patterns
+        # https://jlcpcb.com/help/article/how-to-generate-gerber-and-drill-files-in-kicad-8
         'name': 'JLCPCB',
         'useAuxOrigin': False,
         'gerberProtelExtensions': True,
