@@ -186,7 +186,7 @@ def plotLayers(
         layerRenameRules,
         boardProjectName,
 ):
-    targetLayerCount = board.GetCopperLayerCount() + 5
+    targetLayerCount = board.GetCopperLayerCount() + 7
     pc = pcbnew.PLOT_CONTROLLER(board)
     po = pc.GetPlotOptions()
 
