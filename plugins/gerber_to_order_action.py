@@ -268,6 +268,7 @@ def createZip(
         drillExtensionRenameTo,
         drillMinimalHeader,
         sizeLabel,
+        keepGerbers,
 ):
     board = pcbnew.GetBoard()
     boardFileName = board.GetFileName()
@@ -317,25 +318,40 @@ def createZip(
     removeFileIfExists(zipFilePathWildCard)
     shutil.make_archive(os.path.splitext(zipFilePath)[0], 'zip', outputDirPath, gerberDirName)
 
+    if not keepGerbers:
+        removeDirIfExists(gerberDirPathWildCard)
+
     return zipFilePath
 
 
 class Dialog(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, id=-1, title=pluginName)
-        panel = wx.Panel(self)
-        description = wx.StaticText(panel, label='Export gerber and zip files.')
-        execbtn = wx.Button(panel, label='Export')
-        clsbtn = wx.Button(panel, label='Close')
-        clsbtn.Bind(wx.EVT_BUTTON, self.OnClose)
-        execbtn.Bind(wx.EVT_BUTTON, self.OnExec)
-        buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
-        buttonSizer.Add(execbtn)
-        buttonSizer.Add(clsbtn)
-        layout = wx.BoxSizer(wx.VERTICAL)
-        layout.Add(description, flag=wx.EXPAND|wx.BOTTOM|wx.TOP|wx.LEFT, border=5)
-        layout.Add(buttonSizer, flag=wx.EXPAND|wx.LEFT, border=5)
-        panel.SetSizer(layout)
+        super().__init__(parent, title="Export Options")
+        
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        vbox = wx.BoxSizer(wx.VERTICAL | wx.EXPAND)
+        heading = wx.StaticText(self, label="Select manufacturer to export for:")
+        vbox.Add(heading, flag=wx.ALL, border=10)
+
+        manufacturer_choices = ["All manufacturers"] + [service["name"] for service in pcbServices]
+        self.manufacturer = wx.RadioBox(self, choices=manufacturer_choices, style=wx.RA_VERTICAL)
+        vbox.Add(self.manufacturer, flag=wx.LEFT|wx.RIGHT|wx.EXPAND, border=10)
+        
+        self.keepGerbers = wx.CheckBox(self, label="Keep folder(s) with gerbers layers")
+        vbox.Add(self.keepGerbers, flag=wx.LEFT|wx.RIGHT|wx.EXPAND, border=10)
+        sizer.Add(vbox)
+
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        export_btn = wx.Button(self, label="Export")
+        cancel_btn = wx.Button(self, label="Cancel")
+        
+        hbox.Add(export_btn, flag=wx.RIGHT, border=5)
+        hbox.Add(cancel_btn)
+        vbox.Add(hbox, flag=wx.ALIGN_CENTER|wx.ALL, border=10)
+        self.SetSizerAndFit(sizer)
+        export_btn.Bind(wx.EVT_BUTTON, self.OnExec)
+        cancel_btn.Bind(wx.EVT_BUTTON, self.OnClose)
 
     def OnClose(self,e):
         e.Skip()
@@ -345,7 +361,14 @@ class Dialog(wx.Dialog):
         try:
             zipFiles = []
             sizeLabel = createSizeLabelOfBoard(pcbnew.GetBoard())
-            for pcbService in pcbServices:
+            keepGerbers = self.keepGerbers.GetValue()
+            
+            if self.manufacturer.GetSelection() == 0:
+                pcbServicesToProcess = pcbServices
+            else:
+                pcbServicesToProcess = [pcbServices[self.manufacturer.GetSelection()-1]]                
+            
+            for pcbService in pcbServicesToProcess:
                 path = createZip(
                     pcbServiceName = pcbService['name'],
                     useAuxOrigin = pcbService['useAuxOrigin'],
@@ -356,16 +379,14 @@ class Dialog(wx.Dialog):
                     layerRenameRules = pcbService['layerRenameRules'],
                     drillExtensionRenameTo = pcbService['drillExtensionRenameTo'],
                     sizeLabel = sizeLabel,
+                    keepGerbers = keepGerbers
                 )
                 zipFiles.append(path)
-            message = ''
             if len(zipFiles) > 0:
-                message = 'Exported\n'
-                message += '\n'.join(map(lambda path: os.path.basename(path), zipFiles))
-                message += '\nat\n' + os.path.dirname(zipFiles[0])
+                wx.LaunchDefaultApplication(os.path.dirname(zipFiles[0]))
             else:
-                message = 'Select some service to export.'
-            wx.MessageBox(message, pluginName, wx.OK|wx.ICON_INFORMATION)
+                wx.MessageBox('Select some service to export.', pluginName, wx.OK|wx.ICON_INFORMATION)
+            self.Close()
         except Exception as e:
             wx.MessageBox('Error: ' + str(e) + '\n\n' + traceback.format_exc(), pluginName, wx.OK|wx.ICON_INFORMATION)
         e.Skip()
