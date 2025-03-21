@@ -327,31 +327,21 @@ def createZip(
 class Dialog(wx.Dialog):
     def __init__(self, parent):
         super().__init__(parent, title="Export Options")
-        
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
-        vbox = wx.BoxSizer(wx.VERTICAL | wx.EXPAND)
-        heading = wx.StaticText(self, label="Select manufacturer to export for:")
-        vbox.Add(heading, flag=wx.ALL, border=10)
-
+        sizerVertical = wx.BoxSizer(wx.VERTICAL|wx.EXPAND)
         manufacturer_choices = ["All manufacturers"] + [service["name"] for service in pcbServices]
-        self.manufacturer = wx.RadioBox(self, choices=manufacturer_choices, style=wx.RA_VERTICAL)
-        vbox.Add(self.manufacturer, flag=wx.LEFT|wx.RIGHT|wx.EXPAND, border=10)
-        
+        self.manufacturer = wx.RadioBox(self, label="Select manufacturer to export", choices=manufacturer_choices, style=wx.RA_VERTICAL)
+        sizerVertical.Add(self.manufacturer, flag=wx.LEFT|wx.RIGHT|wx.EXPAND, border=10)
         self.keepGerbers = wx.CheckBox(self, label="Keep folder(s) with gerbers layers")
-        vbox.Add(self.keepGerbers, flag=wx.LEFT|wx.RIGHT|wx.EXPAND, border=10)
-        sizer.Add(vbox)
-
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
-        export_btn = wx.Button(self, label="Export")
-        cancel_btn = wx.Button(self, label="Cancel")
-        
-        hbox.Add(export_btn, flag=wx.RIGHT, border=5)
-        hbox.Add(cancel_btn)
-        vbox.Add(hbox, flag=wx.ALIGN_CENTER|wx.ALL, border=10)
-        self.SetSizerAndFit(sizer)
-        export_btn.Bind(wx.EVT_BUTTON, self.OnExec)
-        cancel_btn.Bind(wx.EVT_BUTTON, self.OnClose)
+        sizerVertical.Add(self.keepGerbers, flag=wx.LEFT|wx.RIGHT|wx.EXPAND, border=10)
+        btnExport = wx.Button(self, label="Export")
+        btnCancel = wx.Button(self, label="Cancel")
+        btnExport.Bind(wx.EVT_BUTTON, self.OnExec)
+        btnCancel.Bind(wx.EVT_BUTTON, self.OnClose)
+        sizerButtons = wx.BoxSizer(wx.HORIZONTAL)
+        sizerButtons.Add(btnExport, flag=wx.RIGHT, border=5)
+        sizerButtons.Add(btnCancel)
+        sizerVertical.Add(sizerButtons, flag=wx.ALIGN_CENTER|wx.ALL, border=10)
+        self.SetSizerAndFit(sizerVertical)
 
     def OnClose(self,e):
         e.Skip()
@@ -362,12 +352,10 @@ class Dialog(wx.Dialog):
             zipFiles = []
             sizeLabel = createSizeLabelOfBoard(pcbnew.GetBoard())
             keepGerbers = self.keepGerbers.GetValue()
-            
             if self.manufacturer.GetSelection() == 0:
                 pcbServicesToProcess = pcbServices
             else:
-                pcbServicesToProcess = [pcbServices[self.manufacturer.GetSelection()-1]]                
-            
+                pcbServicesToProcess = [pcbServices[self.manufacturer.GetSelection()-1]]
             for pcbService in pcbServicesToProcess:
                 path = createZip(
                     pcbServiceName = pcbService['name'],
