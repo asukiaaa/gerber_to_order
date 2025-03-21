@@ -335,6 +335,7 @@ class Dialog(wx.Dialog):
         sizerVertical.Add(self.keepGerbers, flag=wx.LEFT|wx.RIGHT|wx.EXPAND, border=10)
         btnExport = wx.Button(self, label="Export")
         btnCancel = wx.Button(self, label="Cancel")
+        btnExport.SetDefault()
         btnExport.Bind(wx.EVT_BUTTON, self.OnExec)
         btnCancel.Bind(wx.EVT_BUTTON, self.OnClose)
         sizerButtons = wx.BoxSizer(wx.HORIZONTAL)
