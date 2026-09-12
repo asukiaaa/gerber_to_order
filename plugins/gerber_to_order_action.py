@@ -147,6 +147,19 @@ def sanitizeForFilename(text):
     return sanitized.strip('_')
 
 
+def noDrillShapeConstant():
+    # KiCad 9+: pcbnew.DRILL_MARKS_NO_DRILL_SHAPE
+    # KiCad 7/8: pcbnew.DRILL_MARKS.NO_DRILL_SHAPE (when present)
+    # KiCad 5/6: pcbnew.PCB_PLOT_PARAMS.NO_DRILL_SHAPE
+    if hasattr(pcbnew, 'DRILL_MARKS_NO_DRILL_SHAPE'):
+        return pcbnew.DRILL_MARKS_NO_DRILL_SHAPE
+    if hasattr(pcbnew, 'DRILL_MARKS') and hasattr(pcbnew.DRILL_MARKS, 'NO_DRILL_SHAPE'):
+        return pcbnew.DRILL_MARKS.NO_DRILL_SHAPE
+    if hasattr(pcbnew, 'PCB_PLOT_PARAMS') and hasattr(pcbnew.PCB_PLOT_PARAMS, 'NO_DRILL_SHAPE'):
+        return pcbnew.PCB_PLOT_PARAMS.NO_DRILL_SHAPE
+    return 0
+
+
 def buildBoardNameByTitleRevision(board):
     titleBlock = board.GetTitleBlock()
     title = titleBlock.GetTitle().strip()
@@ -228,8 +241,7 @@ def plotLayers(
     po.SetUseAuxOrigin(useAuxOrigin)
     po.SetUseGerberProtelExtensions(gerberProtelExtensions)
     po.SetSubtractMaskFromSilk(subtractMaskfromSilk)
-    if hasattr(pcbnew, "PCB_PLOT_PARAMS.NO_DRILL_SHAPE"):
-        po.SetDrillMarksType(pcbnew.PCB_PLOT_PARAMS.NO_DRILL_SHAPE)
+    po.SetDrillMarksType(noDrillShapeConstant())
     po.SetSkipPlotNPTH_Pads(False)
 
     plotFiles = []
