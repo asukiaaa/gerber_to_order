@@ -401,6 +401,12 @@ class Dialog(wx.Dialog):
             sizeLabel = createSizeLabelOfBoard(board)
             keepGerbers = self.keepGerbers.GetValue()
             nameOverride = buildBoardNameByTitleRevision(board) if self.useTitleRevision.GetValue() else None
+
+            # Refill the zone 
+            zone_filler = pcbnew.ZONE_FILLER(board)
+            zone_filler.FILL(board.Zones())
+            pcbnew.Refresh()
+
             if self.manufacturer.GetSelection() == 0:
                 pcbServicesToProcess = pcbServices
             else:
