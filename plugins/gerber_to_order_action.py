@@ -404,7 +404,7 @@ class Dialog(wx.Dialog):
 
             # Refill the zone 
             zone_filler = pcbnew.ZONE_FILLER(board)
-            zone_filler.FILL(board.Zones())
+            zone_filler.Fill(board.Zones())
             pcbnew.Refresh()
 
             if self.manufacturer.GetSelection() == 0:
