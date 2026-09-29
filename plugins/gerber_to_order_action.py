@@ -295,10 +295,12 @@ def plotDrill(
             renameFileIfExists('%s/%s-NPTH.drl' % (gerberDirPath, boardProjectName),
                                '%s/%s-NPTH.%s' % (gerberDirPath, boardProjectName, drillExtensionRenameTo))
 
+
 def refillZone(board):
     zone_filler = pcbnew.ZONE_FILLER(board)
     zone_filler.Fill(board.Zones())
     pcbnew.Refresh()
+
 
 def createZip(
         pcbServiceName,
@@ -405,9 +407,7 @@ class Dialog(wx.Dialog):
             sizeLabel = createSizeLabelOfBoard(board)
             keepGerbers = self.keepGerbers.GetValue()
             nameOverride = buildBoardNameByTitleRevision(board) if self.useTitleRevision.GetValue() else None
-
             refillZone(board)
-
             if self.manufacturer.GetSelection() == 0:
                 pcbServicesToProcess = pcbServices
             else:
